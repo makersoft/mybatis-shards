@@ -16,6 +16,7 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.annotation.PrimaryKey;
+import org.springframework.util.Assert;
 
 /**
  * 参数处理类
@@ -126,6 +127,38 @@ public class ParameterUtil {
 							return null;
 						}
 						return (Serializable) result;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+
+		return null;
+	}
+	
+	public static Object generatePrimaryKey(Object object, Serializable id) {
+		if (object != null) {
+			Assert.notNull(id, "generated id can not be null.");
+			
+			Class<?> clazz = object.getClass();
+			Field[] first = clazz.getDeclaredFields();
+			Field[] second = clazz.getSuperclass().getDeclaredFields();
+			
+			Field[] fields = Arrays.copyOf(first, first.length + second.length);
+			System.arraycopy(second, 0, fields, first.length, second.length);
+
+			for (Field field : fields) {
+				field.setAccessible(true);
+				
+				PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
+				if (primaryKey != null) {
+					try {
+						//set id
+						field.set(object, id);
+						
+						return object;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
