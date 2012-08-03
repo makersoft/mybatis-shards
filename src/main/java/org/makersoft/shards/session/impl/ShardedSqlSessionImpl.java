@@ -215,7 +215,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 				}
 	    	};
 	    	
-	    	if(parameter instanceof Long){
+	    	if(parameter instanceof Number){
 	    		
 	    	}
 			    
@@ -276,12 +276,21 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		}
 		
 		Assert.notNull(shardId);
+		
+		//设置当前分区id
 		setCurrentSubgraphShardId(shardId);
+		
+		IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
+		if(idGenerator != null){
+			//生成主键 DB生成主键是用专有session？
+			Serializable id = idGenerator.generate(null, parameter);
+			
+		    ParameterUtil.generatePrimaryKey(parameter, id);
+		}
+		
 	    log.debug(String.format("Inserting object of type %s to shard %s", parameter.getClass(), shardId));
 	    
 	    SqlSession session = shardIdsToShards.get(shardId).establishSqlSession();
-	    //生成主键
-	    shardedSqlSessionFactory.getIdGenerator().generate(session, parameter);
 	    
 	    return session.insert(statement, ParameterUtil.resolve(parameter, shardId));
 	}
