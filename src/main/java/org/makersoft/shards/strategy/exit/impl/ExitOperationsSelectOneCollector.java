@@ -20,7 +20,7 @@ public class ExitOperationsSelectOneCollector implements ExitOperationsCollector
 	@Override
 	public List<Object> apply(List<Object> result) {
 		if(statement.endsWith("count")){
-			return new AggregateExitOperation("count").apply(result);
+			return new AggregateExitOperation("sum").apply(result);
 		}else if(statement.endsWith("sum")){
 			return new AggregateExitOperation("sum").apply(result);
 		}else if(statement.endsWith("min")){
