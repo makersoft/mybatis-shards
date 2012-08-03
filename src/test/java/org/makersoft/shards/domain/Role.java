@@ -1,22 +1,24 @@
 package org.makersoft.shards.domain;
 
-import java.io.Serializable;
-
 /**
- * 
+ * entity role for test.
  */
-public class Role implements Serializable{
+public class Role extends AbstractShardEntity{
 	private static final long serialVersionUID = 2960427786748550511L;
 	
-	private Long id;
 	private String name;
 	private String code;
-	public Long getId() {
-		return id;
+	
+	public Role() {
 	}
-	public void setId(Long id) {
-		this.id = id;
+	
+	
+	public Role(String name, String code) {
+		this.name = name;
+		this.code = code;
 	}
+	
+	
 	public String getName() {
 		return name;
 	}
