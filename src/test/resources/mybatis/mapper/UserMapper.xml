@@ -4,31 +4,40 @@
 
 <mapper namespace="UserMapper">
 
-  <select id="getById" parameterType="long" resultType="org.makersoft.shards.domain.User">
-    SELECT * FROM maker_test_user WHERE id = #{id}
-  </select>
-  
-  <select id="findAllUsers" resultType="org.makersoft.shards.domain.User">
-    SELECT * FROM maker_test_user
-  </select>
-  
-  <select id="UserMapper.count" resultType="int">
-    SELECT count(*) FROM maker_test_user
-  </select>
+	<insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
+		INSERT INTO ${prefix}maker_shards_user${suffix} 
+			(id,username,password) 
+		VALUES
+			(#{id}, #{username},#{password})
+	</insert>
+	
+	<select id="getById" parameterType="long"
+		resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM ${prefix}maker_shards_user${suffix} WHERE id = #{id}
+	</select>
 
-  <update id="udpateUser" parameterType="org.makersoft.shards.domain.User">
-    UPDATE maker_test_user SET
-      <!-- username = #{username}, -->
-      password = #{password}
-<!--    WHERE id = #{id}-->
-  </update>
+	<select id="findAllUsers" resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM ${prefix}maker_shards_user${suffix}
+	</select>
 
-  <insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
-  	INSERT INTO ${prefix}maker_test_user${suffix} (id,username,password) VALUES (#{id}, #{username},#{password})
-  </insert>
-  
-  <delete id="deleteById">
-	DELETE FROM maker_test_user where id = #{id}
-  </delete>
+	<select id="UserMapper.count" resultType="int">
+		SELECT count(*) FROM ${prefix}maker_shards_user${suffix}
+	</select>
+
+	<update id="udpateUser" parameterType="org.makersoft.shards.domain.User">
+		UPDATE ${prefix}maker_shards_user${suffix} SET
+		password = #{password}
+	</update>
+
+	<update id="udpateUserById" parameterType="org.makersoft.shards.domain.User">
+		UPDATE ${prefix}maker_shards_user${suffix} SET
+		username = #{username},
+		password = #{password}
+		WHERE id = #{id}
+	</update>
+
+	<delete id="deleteById">
+		DELETE FROM ${prefix}maker_shards_user${suffix} where id = #{id}
+	</delete>
 
 </mapper>
