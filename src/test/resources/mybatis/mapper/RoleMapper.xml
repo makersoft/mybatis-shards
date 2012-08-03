@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.makersoft.shards.mapper.RoleMapper">
+
+  <select id="getById" parameterType="long" resultType="org.makersoft.shards.domain.Role">
+    SELECT * FROM maker_test_role WHERE id = #{id}
+  </select>
+
+  <select id="findAll" resultType="org.makersoft.shards.domain.Role">
+    SELECT * FROM maker_test_role
+  </select>
+
+  <update id="update" parameterType="org.makersoft.shards.domain.Role">
+    UPDATE ACCOUNT SET
+      EMAIL = #{email},
+      FIRSTNAME = #{firstName},
+      LASTNAME = #{lastName},
+      STATUS = #{status},
+      ADDR1 = #{address1},
+      ADDR2 = #{address2,jdbcType=VARCHAR},
+      CITY = #{city},
+      STATE = #{state},
+      ZIP = #{zip},
+      COUNTRY = #{country},
+      PHONE = #{phone}
+    WHERE USERID = #{username}
+  </update>
+
+  <insert id="insertRole" parameterType="org.makersoft.shards.domain.Role">
+  	INSERT INTO maker_test_role (id,username,password) VALUES (#{id}, #{username},#{password})
+  </insert>
+
+</mapper>

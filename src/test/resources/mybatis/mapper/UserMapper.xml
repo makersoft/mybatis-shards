@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper">
+
+  <select id="getById" parameterType="long" resultType="org.makersoft.shards.domain.User">
+    SELECT * FROM maker_test_user WHERE id = #{id}
+  </select>
+  
+  <select id="findAllUsers" resultType="org.makersoft.shards.domain.User">
+    SELECT * FROM maker_test_user
+  </select>
+  
+  <select id="UserMapper.count" resultType="int">
+    SELECT count(*) FROM maker_test_user
+  </select>
+
+  <update id="udpateUser" parameterType="org.makersoft.shards.domain.User">
+    UPDATE maker_test_user SET
+      <!-- username = #{username}, -->
+      password = #{password}
+<!--    WHERE id = #{id}-->
+  </update>
+
+  <insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
+  	INSERT INTO ${prefix}maker_test_user${suffix} (id,username,password) VALUES (#{id}, #{username},#{password})
+  </insert>
+  
+  <delete id="deleteById">
+	DELETE FROM maker_test_user where id = #{id}
+  </delete>
+
+</mapper>

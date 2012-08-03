@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.makersoft.org/schema/shards"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	targetNamespace="http://www.makersoft.org/schema/shards" 
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"/>
+
+
+	<xsd:element name="dateformat">
+		<xsd:complexType>
+			<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:attribute name="transaction-manager" type="xsd:string" default="transactionManager">
+					<xsd:annotation>
+						<xsd:documentation source="java:org.springframework.transaction.PlatformTransactionManager">
+							<![CDATA[
+							]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>  
