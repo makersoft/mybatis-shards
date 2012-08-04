@@ -52,7 +52,12 @@ public class ParameterUtil {
 					public Object intercept(Object object, Method method,
 							Object[] args, MethodProxy proxy) throws Throwable {
 
-						if (args.length > 0) {
+						if("containsKey".equals(method.getName())){
+							//对所有关于Map中containsKey的调用均返回TRUE
+							return true;
+						} 
+							
+						if (args.length > 0 && "get".equals(method.getName())) {
 							if ("prefix".equals(args[0])) {
 								return prefix;
 							} else if ("suffix".equals(args[0])) {
