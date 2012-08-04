@@ -11,11 +11,13 @@ public interface UserDao {
 
 	int insertUser(User user);
 	
-	User getById(Long id);
+	User getById(String id);
 	
 	List<User> findAll();
 	
-	int deleteById(Long id);
+	int deleteAll();
+	
+	int deleteById(String id);
 	
 	int udpateUser(User user);
 	

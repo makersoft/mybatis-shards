@@ -11,9 +11,9 @@
 			(#{id}, #{username},#{password})
 	</insert>
 	
-	<select id="getById" parameterType="long"
+	<select id="getUserById" parameterType="string"
 		resultType="org.makersoft.shards.domain.User">
-		SELECT * FROM ${prefix}maker_shards_user${suffix} WHERE id = #{id}
+		SELECT * FROM maker_shards_user WHERE id = #{id}
 	</select>
 
 	<select id="findAllUsers" resultType="org.makersoft.shards.domain.User">
@@ -29,7 +29,7 @@
 		password = #{password}
 	</update>
 
-	<update id="udpateUserById" parameterType="org.makersoft.shards.domain.User">
+	<update id="updateUserById" parameterType="org.makersoft.shards.domain.User">
 		UPDATE ${prefix}maker_shards_user${suffix} SET
 		username = #{username},
 		password = #{password}
@@ -38,6 +38,10 @@
 
 	<delete id="deleteById">
 		DELETE FROM ${prefix}maker_shards_user${suffix} where id = #{id}
+	</delete>
+	
+	<delete id="deleteAllUser">
+		DELETE FROM ${prefix}maker_shards_user${suffix}
 	</delete>
 
 </mapper>

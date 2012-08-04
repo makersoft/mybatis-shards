@@ -1,5 +1,9 @@
 package org.makersoft.shards.unit.persistence;
 
+import java.util.List;
+
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.makersoft.shards.domain.User;
@@ -18,31 +22,93 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDaoTests {
 
 	@Autowired(required=true)
-	private UserDao userMapper;
+	private UserDao userDao;
+	
+	public static int rowsCount = 50;
+	
+	public static String firstId;
 	
 	@Test
 	@Transactional
 	public void testInsert() throws Exception{
-		User user1 = new User("makersoft1","makersoft1",User.SEX_MALE);
-		User user2 = new User("makersoft2","makersoft2",User.SEX_FEMALE);
-		User user3 = new User("makersoft3","makersoft3",User.SEX_MALE);
-		User user4 = new User("makersoft4","makersoft4",User.SEX_FEMALE);
-		User user5 = new User("makersoft5","makersoft5",User.SEX_MALE);
-		User user6 = new User("makersoft6","makersoft6",User.SEX_FEMALE);
-		User user7 = new User("makersoft7","makersoft7",User.SEX_MALE);
-		User user8 = new User("makersoft8","makersoft8",User.SEX_FEMALE);
-		User user9 = new User("makersoft9","makersoft9",User.SEX_CONFIDENTIALITY);
-		User user10 = new User("makersoft10","makersoft10",User.SEX_CONFIDENTIALITY);
 		
-		userMapper.insertUser(user1);
-		userMapper.insertUser(user2);
-		userMapper.insertUser(user3);
-		userMapper.insertUser(user4);
-		userMapper.insertUser(user5);
-		userMapper.insertUser(user6);
-		userMapper.insertUser(user7);
-		userMapper.insertUser(user8);
-		userMapper.insertUser(user9);
-		userMapper.insertUser(user10);
+		for(int i = 0; i < rowsCount; i++){
+			User user = new User();
+			user.setUsername("makersoft" + i);
+			user.setPassword("makersoft" + i);
+			
+			if(i % 2 == 0){
+				user.setSex(User.SEX_MALE);
+			}else{
+				user.setSex(User.SEX_FEMALE);
+			}
+			
+			userDao.insertUser(user);
+			
+			if(i == 0){
+				firstId = user.getId();
+				System.out.println(firstId);
+			}
+		}
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdate() throws Exception{
+		User user = new User();
+		user.setPassword("www.makersoft.org");
+		int rows = userDao.udpateUser(user);
+		Assert.assertEquals(rowsCount, rows);
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateById() throws Exception {
+		Assert.assertNotNull(firstId);
+
+		User user = new User();
+		user.setId(firstId);	
+		user.setUsername("username");
+		user.setPassword("password");
+		
+		int rows = userDao.updateById(user);
+		Assert.assertEquals(1, rows);
+	}
+	
+	@Test
+	@Transactional(readOnly = true)
+	public void testGetAllCount() throws Exception{
+		int count = userDao.getAllCount();
+		Assert.assertEquals(rowsCount, count);
+	}
+	
+	@Test
+	@Transactional(readOnly = true)
+	public void testFindAll() throws Exception{
+		List<User> users = userDao.findAll();
+		Assert.assertEquals(rowsCount, users.size());
+	}
+	
+	@Test
+	@Transactional(readOnly = true)
+	public void testGetById() throws Exception{
+		User user = userDao.getById(firstId);
+		Assert.assertNotNull(user);
+	}
+	
+	@Test
+	@Transactional
+	public void testDeleteById() throws Exception{
+		
+		int rows = userDao.deleteById(firstId);
+		Assert.assertEquals(1, rows);
+	}
+	
+	@Test
+	@Transactional
+	public void testDelete() throws Exception{
+		
+		int rows = userDao.deleteAll();
+		Assert.assertEquals(rowsCount - 1, rows);
 	}
 }

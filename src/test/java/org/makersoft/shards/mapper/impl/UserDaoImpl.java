@@ -16,8 +16,8 @@ public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao{
 	}
 	
 	@Override
-	public User getById(Long id) {
-		return super.getSqlSession().selectOne("getById", id);
+	public User getById(String id) {
+		return super.getSqlSession().selectOne("getUserById", id);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao{
 	}
 
 	@Override
-	public int deleteById(Long id) {
+	public int deleteById(String id) {
 		return super.getSqlSession().delete("deleteById", id);
 	}
 
@@ -42,7 +42,12 @@ public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao{
 
 	@Override
 	public int updateById(User user) {
-		return super.getSqlSession().update("updateById", user);
+		return super.getSqlSession().update("updateUserById", user);
+	}
+
+	@Override
+	public int deleteAll() {
+		return super.getSqlSession().delete("deleteAllUser");
 	}
 
 }
