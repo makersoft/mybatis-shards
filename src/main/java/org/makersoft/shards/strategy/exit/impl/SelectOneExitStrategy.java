@@ -13,17 +13,19 @@ import org.makersoft.shards.utils.Lists;
  */
 public class SelectOneExitStrategy implements ExitStrategy<Object> {
 
-	private final List<Object> result = Lists.newArrayList();
+	private final List<Object> nonNullResult = Lists.newArrayList();
 
 	@Override
-	public synchronized boolean addResult(Object oneResult, Shard shard) {
-		result.add(oneResult);
+	public synchronized boolean addResult(Object result, Shard shard) {
+		if(result != null){
+			nonNullResult.add(result);
+		}
 		return false;
 	}
 
 	@Override
 	public Object compileResults(ExitOperationsCollector exitOperationsCollector) {
-		List<Object> list = exitOperationsCollector.apply(result);
+		List<Object> list = exitOperationsCollector.apply(nonNullResult);
 
 		if (list.size() == 1) {
 			return list.get(0);
