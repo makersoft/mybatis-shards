@@ -102,10 +102,23 @@ public class ShardSelectImpl implements ShardSelect {
 
 		ShardOperation<Object> shardOp = new ShardOperation<Object>() {
 			public Object execute(Shard shard) {
+				
+//				List<Object> notNullResult = Lists.newArrayList();
 				// 虚拟分区，多线程优化
-				return shard.establishSqlSession().selectOne(
-						selectFactory.getStatement(),
-						selectFactory.getParameter());
+				for (ShardId shardId : shard.getShardIds()) {
+					
+					Object result = shard.establishSqlSession().selectOne(
+							selectFactory.getStatement(),
+							ParameterUtil.resolve(selectFactory.getParameter(),
+									shardId));
+					
+					if(result != null){
+						//直接返回第一个非空值？多个虚拟分区情况下应该不对！
+						return result;
+					}
+				}
+				
+				return null;
 			}
 
 			public String getOperationName() {
