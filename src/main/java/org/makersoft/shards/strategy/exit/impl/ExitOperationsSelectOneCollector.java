@@ -20,7 +20,7 @@ public class ExitOperationsSelectOneCollector implements ExitOperationsCollector
 	@Override
 	public List<Object> apply(List<Object> result) {
 		if(statement.endsWith("count")){
-			return new AggregateExitOperation("sum").apply(result);
+			return new RowCountExitOperation().apply(result);
 		}else if(statement.endsWith("sum")){
 			return new AggregateExitOperation("sum").apply(result);
 		}else if(statement.endsWith("min")){
@@ -31,7 +31,7 @@ public class ExitOperationsSelectOneCollector implements ExitOperationsCollector
 			return new AvgResultsExitOperation().apply(result);
 		}
 		
-		throw new UnsupportedOperationException();
+		return result;
 	}
 
 	@Override
