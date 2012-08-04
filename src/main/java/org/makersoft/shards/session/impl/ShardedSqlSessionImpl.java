@@ -331,7 +331,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		int rows = 0;
 		for(ShardId shardId : shardIds){
 			rows += shardIdsToShards.get(shardId).establishSqlSession().update(statement, ParameterUtil.resolve(parameter, shardId));
-			log.debug(String.format("Updateing object of type %s to shard %s", parameter.getClass(), shardId));
+			log.debug(String.format("Updateing object of type %s to shard %s", parameter, shardId));
 		}
 		
 		return rows;
@@ -402,7 +402,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		int rows = 0;
 		for(ShardId shardId : shardIds){
 			rows += shardIdsToShards.get(shardId).establishSqlSession().delete(statement, ParameterUtil.resolve(parameter, shardId));
-			log.debug(String.format("Deleting object of type %s to shard %s", parameter.getClass(), shardId));
+			log.debug(String.format("Deleting object of type %s to shard %s", parameter, shardId));
 		}
 		return rows;
 	}
