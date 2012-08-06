@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.makersoft.shards.Shard;
+import org.makersoft.shards.ShardId;
 import org.makersoft.shards.ShardOperation;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.exit.ExitOperationsCollector;
@@ -21,11 +22,14 @@ public class SequentialShardAccessStrategy implements ShardAccessStrategy {
 			ExitStrategy<T> exitStrategy,
 			ExitOperationsCollector exitOperationsCollector) {
 		
-		for (Shard shard : getNextOrderingOfShards(shards)) {
-			if (exitStrategy.addResult(operation.execute(shard), shard)) {
-				log.debug(String.format("Short-circuiting operation %s after execution against shard %s", operation.getOperationName(), shard));
-				break;
+		execute: for (Shard shard : getNextOrderingOfShards(shards)) {
+			for(ShardId shardId : shard.getShardIds()){
+				if (exitStrategy.addResult(operation.execute(shard.establishSqlSession(), shardId), shard)) {
+					log.debug(String.format("Short-circuiting operation %s after execution against shard %s", operation.getOperationName(), shard));
+					break execute;
+				}
 			}
+			
 		}
 		
 		return exitStrategy.compileResults(exitOperationsCollector);
