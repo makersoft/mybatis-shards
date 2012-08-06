@@ -11,5 +11,7 @@ public interface SelectFactory {
 	
 	Object getParameter();
 	
+	String getMapKey();
+	
 	RowBounds getRowBounds();
 }
