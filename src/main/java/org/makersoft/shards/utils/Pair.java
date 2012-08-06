@@ -52,6 +52,15 @@ public class Pair<A, B> {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((first == null) ? 0 : first.hashCode());
+		result = prime * result + ((second == null) ? 0 : second.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(/* @Nullable */Object object) {
 		if (object instanceof Pair<?, ?>) {
 			Pair<?, ?> other = (Pair<?, ?>) object;
