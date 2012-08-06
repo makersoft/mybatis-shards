@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 
 public class MultiDataSourcesTransactionManager implements PlatformTransactionManager, InitializingBean {
 	
-	private static final long serialVersionUID = 4712923770419532385L;
 	private static final Logger logger = Logger.getLogger(MultiDataSourcesTransactionManager.class);
 
 	/* 数据源 */
@@ -51,40 +50,36 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 			DataSourceTransactionManager txManager = new DataSourceTransactionManager(dataSource);
 			transactionManagers.put(dataSource, txManager);
 		}
-//		this.addShutdownHook();
+		this.addShutdownHook();
 	}
 
-//	private void addShutdownHook() {
-//		Runtime.getRuntime().addShutdownHook(new Thread() {
-//			@SuppressWarnings("static-access")
-//			@Override
-//			public void run() {
-//				// rollback 和 commit如果不为0
-//				while (commitCount.get() != 0) {
-//					logger.info("等待数据库提交事务...");
-//					try {
-//						Thread.currentThread().sleep(1);
-//					} catch (InterruptedException e) {
-//						logger.warn(
-//								"interrupted when shuting down the query executor:\n{}",
-//								e);
-//					}
-//				}
-//				while (rollbackCount.get() != 0) {
-//					logger.info("等待数据库回滚事务...");
-//					try {
-//						Thread.currentThread().sleep(1);
-//					} catch (InterruptedException e) {
-//						logger.warn(
-//								"interrupted when shuting down the query executor:\n{}",
-//								e);
-//					}
-//				}
-//				logger.info("数据库的事务处理完成!");
-//			}
-//		});
-//
-//	}
+	private void addShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@SuppressWarnings("static-access")
+			@Override
+			public void run() {
+				// rollback 和 commit如果不为0
+				while (commitCount.get() != 0) {
+					logger.info("Waiting for commit transaction.");
+					try {
+						Thread.currentThread().sleep(1);
+					} catch (InterruptedException e) {
+						logger.warn("interrupted when shuting down the query executor:\n{}",e);
+					}
+				}
+				while (rollbackCount.get() != 0) {
+					logger.info("Waiting for rollback transaction.");
+					try {
+						Thread.currentThread().sleep(1);
+					} catch (InterruptedException e) {
+						logger.warn("interrupted when shuting down the query executor:\n{}",e);
+					}
+				}
+				logger.info("Transaction success.");
+			}
+		});
+
+	}
 
 	@Override
 	public TransactionStatus getTransaction(TransactionDefinition definition)
