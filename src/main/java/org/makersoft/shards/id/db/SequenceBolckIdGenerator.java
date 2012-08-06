@@ -9,24 +9,25 @@ import org.makersoft.shards.id.IdGenerator;
 /**
  * 
  */
-public class DbIdGenerator implements IdGenerator {
+public class SequenceBolckIdGenerator implements IdGenerator {
 	protected int idBlockSize = 0;
 	protected long nextId = 0;
 	protected long lastId = -1;
 	
 	protected short nodeId = 0;
 	
-	public DbIdGenerator(){
+	public SequenceBolckIdGenerator(){
 		
 	}
 
 	@Override
 	public synchronized Serializable generate(SqlSession session, Object object) {
-		if (lastId < nextId) {
-			getNewBlock(session, object);
-		}
-		long _nextId = nextId++;
-		return Long.toString(_nextId);
+		throw new UnsupportedOperationException();
+//		if (lastId < nextId) {
+//			getNewBlock(session, object);
+//		}
+//		long _nextId = nextId++;
+//		return Long.toString(_nextId);
 	}
 
 	protected synchronized void getNewBlock(SqlSession session, Object object) {
@@ -42,7 +43,14 @@ public class DbIdGenerator implements IdGenerator {
 
 	@Override
 	public ShardId extractShardId(Serializable identifier) {
-		return null;
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * 集群节点Id
+	 */
+	public void setNodeId(short nodeId) {
+		this.nodeId = nodeId;
 	}
 
 }
