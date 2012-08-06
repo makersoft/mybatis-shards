@@ -21,7 +21,6 @@ import org.makersoft.shards.ShardId;
 import org.makersoft.shards.ShardImpl;
 import org.makersoft.shards.ShardOperation;
 import org.makersoft.shards.id.IdGenerator;
-import org.makersoft.shards.id.uuid.ShardedUUIDGenerator;
 import org.makersoft.shards.select.impl.AdHocSelectFactoryImpl;
 import org.makersoft.shards.select.impl.ShardSelectImpl;
 import org.makersoft.shards.session.ShardIdResolver;
@@ -88,9 +87,6 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 
 	/**
 	 * 
-	 * @param statement
-	 * @param shardsToConsider
-	 * @return
 	 */
 	private Shard getShardForStatement(String statement, List<Shard> shardsToConsider) {
 		//首先查找主分区？如果没有再找其他分区？
@@ -110,6 +106,9 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 	    return shard.establishSqlSession();
 	}
 	
+	/**
+	 * 将虚拟分区转化为物理分区
+	 */
 	private List<Shard> shardIdListToShardList(List<ShardId> shardIds) {
 	    Set<Shard> shards = Sets.newHashSet();
 	    for (ShardId shardId : shardIds) {
@@ -118,6 +117,9 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 	    return Lists.newArrayList(shards);
 	}
 	
+	/**
+	 * @return 所有物理分区
+	 */
 	public List<Shard> getShards() {
 		return Collections.unmodifiableList(shards);
 	}
@@ -142,7 +144,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 	    	return shard.getShardIds().iterator().next();
 	    } else {
 	    	IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
-	    	if (idGenerator instanceof ShardedUUIDGenerator) {
+	    	if (idGenerator != null) {
 	    		return idGenerator.extractShardId(this.extractId(parameter));
 	    	} else {
 //	    		// TODO(tomislav): also use shard resolution strategy if it returns only 1 shard; throw this error in config instead of here
@@ -169,20 +171,9 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		return shardId;
 	}
 	
-//	private List<ShardId> selectShardIdByStatement(String statement, final Object obj){
-//		List<ShardId> shardIds = shardStrategy.getShardSelectionStrategy().selectShardIdByStatement(statement, obj);
-//	    log.debug(String.format("Selected shard %s for statement and object of type %s", shardIds, statement, obj.getClass().getName()));
-//	    if (shardIds == null) {
-//	    	shardIds = Collections.emptyList();
-//		}
-//		return shardIds;
-//	}
-	
-	// implements from SqlSession
-
 	List<ShardId> selectShardIdsFromShardResolutionStrategyData(ShardResolutionStrategyData srsd) {
 		IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
-		if ((idGenerator instanceof ShardedUUIDGenerator) && (srsd.getId() != null)) {
+		if ((idGenerator != null) && (srsd.getId() != null)) {
 			//
 			return Collections.singletonList(idGenerator.extractShardId(srsd.getId()));
 		}
@@ -194,8 +185,11 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		return shardStrategy.getShardAccessStrategy().<T>apply(this.shardIdListToShardList(shardIds),
 				shardOp,
 				new FirstNonNullResultExitStrategy<T>(),
-				new ExitOperationsSelectOneCollector(null));
+				new ExitOperationsSelectOneCollector(srsd.getStatement()));
 	}
+	
+	
+	// implements from SqlSession
 	
 	@Override
 	public <T> T selectOne(String statement) {
@@ -203,27 +197,31 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 	}
 
 	@Override
-	public <T> T selectOne(final String statement, Object parameter) {
-		if(statement.endsWith("getById")){
+	public <T> T selectOne(final String statement, final Object parameter) {
+		if(statement.endsWith("getById") && parameter != null){
 			ShardOperation<T> shardOp = new ShardOperation<T>() {
-				public T execute(Shard shard) {
-					return shard.establishSqlSession().<T>selectOne(statement, null);
+				public T execute(SqlSession session, ShardId shardId) {
+					return session.<T>selectOne(statement, ParameterUtil.resolve(parameter, shardId));
 				}
 
 				public String getOperationName() {
 					return "selectOne(String statement, Object parameter)";
 				}
 	    	};
+	    	Serializable id = this.extractId(parameter);
 	    	
-	    	if(parameter instanceof Number){
-	    		
-	    	}
+	    	Assert.notNull(id, "When get entity by Id, Id can not be null");
 			    
-		    return this.<T>applyGetOperation(shardOp, new ShardResolutionStrategyDataImpl(statement, parameter, this.extractId(parameter)));
+		    return this.<T>applyGetOperation(shardOp, new ShardResolutionStrategyDataImpl(statement, parameter, id));
 		}
 		
-		return new ShardSelectImpl(shards, new AdHocSelectFactoryImpl(
-				statement, parameter, null),
+		//从Resolution策略获取
+		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithReadOperation(statement, parameter);
+		
+		Assert.notNull(potentialShards, "ShardResolutionStrategy returnd value cann't be null");
+		
+		return new ShardSelectImpl(potentialShards, new AdHocSelectFactoryImpl(
+				statement, parameter, null, null),
 				shardStrategy.getShardAccessStrategy()).<T>getSingleResult();
 
 	}
@@ -240,9 +238,12 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 
 	@Override
 	public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
+		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithReadOperation(statement, parameter);
 		
-		return new ShardSelectImpl(shards, new AdHocSelectFactoryImpl(
-				statement, parameter, rowBounds),
+		Assert.notNull(potentialShards, "ShardResolutionStrategy returnd value cann't be null");
+		
+		return new ShardSelectImpl(potentialShards, new AdHocSelectFactoryImpl(
+				statement, parameter, null, rowBounds),
 				shardStrategy.getShardAccessStrategy()).<E>getResultList();
 	}
 
@@ -259,7 +260,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 	@Override
 	public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
 		return new ShardSelectImpl(shards, new AdHocSelectFactoryImpl(
-				statement, parameter, rowBounds),
+				statement, parameter, mapKey, rowBounds),
 				shardStrategy.getShardAccessStrategy()).getResultMap();
 	}
 
@@ -280,17 +281,19 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		//设置当前分区id
 		setCurrentSubgraphShardId(shardId);
 		
-		IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
-		if(idGenerator != null){
-			//生成主键 DB生成主键是用专有session？
-			Serializable id = idGenerator.generate(null, parameter);
-			
-		    ParameterUtil.generatePrimaryKey(parameter, id);
-		}
-		
 	    log.debug(String.format("Inserting object of type %s to shard %s", parameter.getClass(), shardId));
 	    
 	    SqlSession session = shardIdsToShards.get(shardId).establishSqlSession();
+	    
+		IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
+		if(idGenerator != null){
+			//生成主键 DB生成主键是用专有session？
+			Serializable id = idGenerator.generate(session, parameter);
+			
+		    log.debug(String.format("Generating id for object %s ,the type of IdGenerator is %s and generated Id is %s.", parameter.getClass(), idGenerator.getClass(), id));
+		    
+		    ParameterUtil.generatePrimaryKey(parameter, id);
+		}
 	    
 	    return session.insert(statement, ParameterUtil.resolve(parameter, shardId));
 	}
@@ -302,19 +305,9 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 
 	@Override
 	public int update(String statement, Object parameter) {
-//		if("update".equals(statement.lastIndexOf("."))){
-//			//通过Id主键获取分区
-//			ShardId shardId = shardedSqlSessionFactory.getIdGenerator().extractShardId(extractId(parameter));
-//		}
-//		
-//		List<ShardId> shardIds = selectShardIdByStatement(statement, parameter);
-//		if(shardIds == null){
-//			ShardId shardId = this.getShardIdForStatementOrParameter(statement, parameter);
-//			shardIds = Lists.newArrayList(shardId);
-//		}
 		List<ShardId> shardIds = Lists.newArrayList();
 		
-		List<Shard> potentialShards = determineShardsObjectViaResolutionStrategy(statement, parameter);
+		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithWriteOperation(statement, parameter);
 		
 		if(potentialShards != null){
 			for(Shard shard : potentialShards){
@@ -331,21 +324,27 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		int rows = 0;
 		for(ShardId shardId : shardIds){
 			rows += shardIdsToShards.get(shardId).establishSqlSession().update(statement, ParameterUtil.resolve(parameter, shardId));
-			log.debug(String.format("Updateing object of type %s to shard %s", parameter, shardId));
+			log.debug(String.format("Updateing object of type %s to shard %s", parameter == null ? parameter : parameter.getClass(), shardId));
 		}
 		
 		return rows;
+	}
+	
+	
+	List<Shard> determineShardsViaResolutionStrategyWithWriteOperation(String statement, Object parameter) {
+	    Serializable id = this.extractId(parameter);
+	    return this.determineShardsObjectsViaResolutionStrategy(statement, parameter, id);
+	}
+	
+	List<Shard> determineShardsViaResolutionStrategyWithReadOperation(String statement, Object parameter) {
+	    return this.determineShardsObjectsViaResolutionStrategy(statement, parameter, null);
 	}
 	
 	/**
 	 * 通过statement和parameter确定分区
 	 * 如果parameter中可以提取出主键ID,首先通过ID去确定唯一分区
 	 */
-	List<Shard> determineShardsObjectViaResolutionStrategy(String statement, Object parameter) {
-	    Serializable id = this.extractId(parameter);
-//	    if(id == null) {
-//	      return Collections.emptyList();
-//	    }
+	private List<Shard> determineShardsObjectsViaResolutionStrategy(String statement, Object parameter, Serializable id) {
 	    ShardResolutionStrategyData srsd = new ShardResolutionStrategyDataImpl(statement, parameter, id);
 	    List<ShardId> shardIds = this.selectShardIdsFromShardResolutionStrategyData(srsd);
 	    return shardIdListToShardList(shardIds);
@@ -374,19 +373,9 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 
 	@Override
 	public int delete(String statement, Object parameter) {
-//		if("delete".equals(statement.lastIndexOf("."))){
-//			//通过Id主键获取分区
-//		}
-//		
-//		List<ShardId> shardIds = selectShardIdByStatement(statement, parameter);
-//		if(shardIds == null){
-//			ShardId shardId = this.getShardIdForStatementOrParameter(statement, parameter);
-//			shardIds = Lists.newArrayList(shardId);
-//		}
-		
 		List<ShardId> shardIds = Lists.newArrayList();
 		
-		List<Shard> potentialShards = determineShardsObjectViaResolutionStrategy(statement, parameter);
+		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithWriteOperation(statement, parameter);
 		if(potentialShards != null){
 			for(Shard shard : potentialShards){
 				shardIds.addAll(shard.getShardIds());
