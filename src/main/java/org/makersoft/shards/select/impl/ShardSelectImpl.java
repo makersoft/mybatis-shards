@@ -3,6 +3,7 @@ package org.makersoft.shards.select.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
 import org.makersoft.shards.Shard;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.ShardOperation;
@@ -13,7 +14,6 @@ import org.makersoft.shards.strategy.exit.impl.ConcatenateListsExitStrategy;
 import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectListCollector;
 import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectOneCollector;
 import org.makersoft.shards.strategy.exit.impl.SelectOneExitStrategy;
-import org.makersoft.shards.utils.Lists;
 import org.makersoft.shards.utils.ParameterUtil;
 
 /**
@@ -48,18 +48,11 @@ public class ShardSelectImpl implements ShardSelect {
 	@SuppressWarnings("unchecked")
 	public <E> List<E> getResultList() {
 		ShardOperation<List<Object>> shardOp = new ShardOperation<List<Object>>() {
-			public List<Object> execute(Shard shard) {
+			public List<Object> execute(SqlSession session, ShardId shardId) {
 
-				List<Object> result = Lists.newArrayList();
-				// 多线程优化
-				for (ShardId shardId : shard.getShardIds()) {
-					result.addAll(shard.establishSqlSession().selectList(
-							selectFactory.getStatement(),
-							ParameterUtil.resolve(selectFactory.getParameter(),
-									shardId), selectFactory.getRowBounds()));
-				}
-
-				return result;
+				return session.selectList(selectFactory.getStatement(),
+						ParameterUtil.resolve(selectFactory.getParameter(), shardId), 
+						selectFactory.getRowBounds());
 			}
 
 			public String getOperationName() {
@@ -74,11 +67,11 @@ public class ShardSelectImpl implements ShardSelect {
 	@Override
 	public <K, V> Map<K, V> getResultMap() {
 //		ShardOperation<Map<K, V>> shardOp = new ShardOperation<Map<K, V>>() {
-//			public Map<K, V> execute(Shard shard) {
+//			public Map<K, V> execute(SqlSession session, ShardId shardId) {
 //
-//				// return shard.establishSqlSession().selectMap(statement,
-//				// parameter, mapKey);
-//				return null;
+//				return session.selectMap(selectFactory.getStatement(), 
+//						ParameterUtil.resolve(selectFactory.getParameter(), shardId), 
+//						mapKey);
 //			}
 //
 //			public String getOperationName() {
@@ -101,24 +94,10 @@ public class ShardSelectImpl implements ShardSelect {
 	public <T> T getSingleResult() {
 
 		ShardOperation<Object> shardOp = new ShardOperation<Object>() {
-			public Object execute(Shard shard) {
+			public Object execute(SqlSession session, ShardId shardId) {
 				
-//				List<Object> notNullResult = Lists.newArrayList();
-				// 虚拟分区，多线程优化
-				for (ShardId shardId : shard.getShardIds()) {
-					
-					Object result = shard.establishSqlSession().selectOne(
-							selectFactory.getStatement(),
-							ParameterUtil.resolve(selectFactory.getParameter(),
-									shardId));
-					
-					if(result != null){
-						//直接返回第一个非空值？多个虚拟分区情况下应该不对！
-						return result;
-					}
-				}
-				
-				return null;
+				return session.selectOne(selectFactory.getStatement(),
+						ParameterUtil.resolve(selectFactory.getParameter(), shardId));
 			}
 
 			public String getOperationName() {
