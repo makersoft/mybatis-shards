@@ -17,7 +17,7 @@ public class User extends AbstractShardEntity{
 
 	private String password;
 
-	private int sex;
+	private int gender;
 
 	public User() {
 	}
@@ -25,10 +25,10 @@ public class User extends AbstractShardEntity{
 	/**
 	 * 有参构造，方便测试用例初始化
 	 */
-	public User(String username, String password, int sex) {
+	public User(String username, String password, int gender) {
 		this.username = username;
 		this.password = password;
-		this.sex = sex;
+		this.gender = gender;
 	}
 
 
@@ -48,12 +48,12 @@ public class User extends AbstractShardEntity{
 		this.password = password;
 	}
 
-	public int getSex() {
-		return sex;
+	public int getGender() {
+		return gender;
 	}
 
-	public void setSex(int sex) {
-		this.sex = sex;
+	public void setGender(int gender) {
+		this.gender = gender;
 	}
 
 }

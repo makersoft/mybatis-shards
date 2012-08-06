@@ -6,18 +6,25 @@
 
 	<insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
 		INSERT INTO ${prefix}maker_shards_user${suffix} 
-			(id,username,password) 
+			(id, username, password, gender) 
 		VALUES
-			(#{id}, #{username},#{password})
+			(#{id}, #{username},#{password}, #{gender})
 	</insert>
 	
-	<select id="getUserById" parameterType="string"
-		resultType="org.makersoft.shards.domain.User">
+	<select id="getUserById" parameterType="string" resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM maker_shards_user WHERE id = #{id}
+	</select>
+	
+	<select id="UserMapper.getById" parameterType="string" resultType="org.makersoft.shards.domain.User">
 		SELECT * FROM maker_shards_user WHERE id = #{id}
 	</select>
 
 	<select id="findAllUsers" resultType="org.makersoft.shards.domain.User">
 		SELECT * FROM ${prefix}maker_shards_user${suffix}
+	</select>
+	
+	<select id="findByGender" resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender};
 	</select>
 
 	<select id="UserMapper.count" resultType="int">

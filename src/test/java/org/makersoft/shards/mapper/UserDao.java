@@ -15,6 +15,8 @@ public interface UserDao {
 	
 	List<User> findAll();
 	
+	List<User> findByGender(int gender);
+	
 	int deleteAll();
 	
 	int deleteById(String id);

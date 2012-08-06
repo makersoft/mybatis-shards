@@ -17,7 +17,7 @@ public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao{
 	
 	@Override
 	public User getById(String id) {
-		return super.getSqlSession().selectOne("getUserById", id);
+		return super.getSqlSession().selectOne("UserMapper.getById", id);
 	}
 
 	@Override
@@ -25,6 +25,11 @@ public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao{
 		return super.getSqlSession().selectList("findAllUsers");
 	}
 
+	@Override
+	public List<User> findByGender(int gender) {
+		return  super.getSqlSession().selectList("findByGender", gender);
+	}
+	
 	@Override
 	public int udpateUser(User user) {
 		return super.getSqlSession().update("udpateUser", user);

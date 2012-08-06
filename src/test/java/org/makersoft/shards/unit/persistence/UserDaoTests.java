@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.makersoft.shards.domain.User;
 import org.makersoft.shards.mapper.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,7 +25,7 @@ public class UserDaoTests {
 	@Autowired(required=true)
 	private UserDao userDao;
 	
-	public static int rowsCount = 50;
+	public static int rowsCount = 500;
 	
 	public static String firstId;
 	
@@ -38,9 +39,9 @@ public class UserDaoTests {
 			user.setPassword("makersoft" + i);
 			
 			if(i % 2 == 0){
-				user.setSex(User.SEX_MALE);
+				user.setGender(User.SEX_MALE);
 			}else{
-				user.setSex(User.SEX_FEMALE);
+				user.setGender(User.SEX_FEMALE);
 			}
 			
 			userDao.insertUser(user);
@@ -91,12 +92,20 @@ public class UserDaoTests {
 	
 	@Test
 	@Transactional(readOnly = true)
+	public void testFindByGender() throws Exception{
+		List<User> users = userDao.findByGender(User.SEX_MALE);
+		Assert.assertEquals(rowsCount / 2, users.size());
+	}
+	
+	@Test
+	@Transactional(readOnly = true)
 	public void testGetById() throws Exception{
 		User user = userDao.getById(firstId);
 		Assert.assertNotNull(user);
 	}
 	
 	@Test
+	@Rollback
 	@Transactional
 	public void testDeleteById() throws Exception{
 		
@@ -109,6 +118,6 @@ public class UserDaoTests {
 	public void testDelete() throws Exception{
 		
 		int rows = userDao.deleteAll();
-		Assert.assertEquals(rowsCount - 1, rows);
+		Assert.assertEquals(rowsCount, rows);
 	}
 }
