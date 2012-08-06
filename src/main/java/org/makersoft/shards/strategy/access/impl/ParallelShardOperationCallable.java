@@ -25,6 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.makersoft.shards.Shard;
+import org.makersoft.shards.ShardId;
 import org.makersoft.shards.ShardOperation;
 import org.makersoft.shards.strategy.exit.ExitStrategy;
 
@@ -52,6 +53,8 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
   private final ShardOperation<T> operation;
 
   private final Shard shard;
+  
+  private final ShardId shardId;
 
   private final List<StartAwareFutureTask> futureTasks;
 
@@ -61,12 +64,14 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
       ExitStrategy<T> exitStrategy,
       ShardOperation<T> operation,
       Shard shard,
+      ShardId shardId,
       List<StartAwareFutureTask> futureTasks) {
     this.startSignal = startSignal;
     this.doneSignal = doneSignal;
     this.exitStrategy = exitStrategy;
     this.operation = operation;
     this.shard = shard;
+    this.shardId = shardId;
     this.futureTasks = futureTasks;
   }
 
@@ -78,7 +83,7 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
        * If addResult() returns true it means there is no more work to be
        * performed.  Cancel all the outstanding tasks.
        */
-      if(exitStrategy.addResult(operation.execute(shard), shard)) {
+      if(exitStrategy.addResult(operation.execute(shard.establishSqlSession(), shardId), shard)) {
         log.debug(
             String.format(
                 "Short-circuiting execution of %s on other threads after execution against shard %s",

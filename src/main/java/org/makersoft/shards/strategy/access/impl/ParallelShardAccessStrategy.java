@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.makersoft.shards.Shard;
+import org.makersoft.shards.ShardId;
 import org.makersoft.shards.ShardOperation;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.exit.ExitOperationsCollector;
@@ -50,19 +51,23 @@ public class ParallelShardAccessStrategy implements ShardAccessStrategy{
 	    
 	    for(final Shard shard : shards) {
 	        // create a task for each shard
-	        ParallelShardOperationCallable<T> callable =
-	            new ParallelShardOperationCallable<T>(
-	                startSignal,
-	                doneSignal,
-	                exitStrategy,
-	                operation,
-	                shard,
-	                tasks);
-	        // wrap the task in a StartAwareFutureTask so that the task can be cancelled
-	        StartAwareFutureTask ft = new StartAwareFutureTask(callable, taskId++);
-	        tasks.add(ft);
-	        // hand the task off to the executor for execution
-	        executor.execute(ft);
+	    	for(final ShardId shardId : shard.getShardIds()) {
+	    		ParallelShardOperationCallable<T> callable =
+	    	            new ParallelShardOperationCallable<T>(
+	    	                startSignal,
+	    	                doneSignal,
+	    	                exitStrategy,
+	    	                operation,
+	    	                shard,
+	    	                shardId,
+	    	                tasks);
+	    	        // wrap the task in a StartAwareFutureTask so that the task can be cancelled
+	    	        StartAwareFutureTask ft = new StartAwareFutureTask(callable, taskId++);
+	    	        tasks.add(ft);
+	    	        // hand the task off to the executor for execution
+	    	        executor.execute(ft);
+	    	}
+	        
 	      }
 	      // the tasks List is populated, release the threads!
 	      startSignal.countDown();
