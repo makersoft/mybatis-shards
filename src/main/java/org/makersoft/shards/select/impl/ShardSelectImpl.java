@@ -71,7 +71,7 @@ public class ShardSelectImpl implements ShardSelect {
 //
 //				return session.selectMap(selectFactory.getStatement(), 
 //						ParameterUtil.resolve(selectFactory.getParameter(), shardId), 
-//						mapKey);
+//						selectFactory.getMapKey());
 //			}
 //
 //			public String getOperationName() {

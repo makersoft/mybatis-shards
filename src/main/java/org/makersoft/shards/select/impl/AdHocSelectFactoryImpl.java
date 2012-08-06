@@ -10,12 +10,14 @@ public class AdHocSelectFactoryImpl implements SelectFactory {
 
 	private final String statement;
 	private final Object parameter;
+	private final String mapKey;
 	private final RowBounds rowBounds;
 
 	public AdHocSelectFactoryImpl(String statement, Object parameter,
-			RowBounds rowBounds) {
+			String mapKey, RowBounds rowBounds) {
 		this.statement = statement;
 		this.parameter = parameter;
+		this.mapKey = mapKey;
 		this.rowBounds = rowBounds;
 
 	}
@@ -30,6 +32,11 @@ public class AdHocSelectFactoryImpl implements SelectFactory {
 		return parameter;
 	}
 
+	@Override
+	public String getMapKey(){
+		return mapKey;
+	}
+	
 	@Override
 	public RowBounds getRowBounds() {
 		return rowBounds;
