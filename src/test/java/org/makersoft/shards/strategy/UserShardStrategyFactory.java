@@ -66,7 +66,7 @@ public class UserShardStrategyFactory implements ShardStrategyFactory {
 					ShardResolutionStrategyData shardResolutionStrategyData) {
 				String statement = shardResolutionStrategyData.getStatement();
 				Object parameter = shardResolutionStrategyData.getParameter();
-				Serializable id = shardResolutionStrategyData.getId();
+//				Serializable id = shardResolutionStrategyData.getId();
 				
 				//自定义规则...
 				if("findByGender".equals(statement)){
