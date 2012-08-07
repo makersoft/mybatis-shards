@@ -8,7 +8,7 @@ Mybatis Shards在实现方式上完全借鉴于Hibernate Shards，目前可以�
 
 Mybatis Shards采用无侵入性的方式，无需更改现有程序代码，只要根据现有业务编写合理的分区策略即可。
 
-在多数据源事物管理方面借鉴[Cobar Client][2]，使用Best Efforts 1PC Pattern来实现多数据源的管理。
+在多数据源事物管理方面借鉴[Cobar Client][2]，采用Best Efforts 1PC Pattern的方式来实现多数据源的管理。
 
 
 ## 同类产品比较
