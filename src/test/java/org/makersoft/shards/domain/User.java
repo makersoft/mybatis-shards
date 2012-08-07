@@ -1,17 +1,14 @@
 package org.makersoft.shards.domain;
 
-
-
 /**
  * User domain for test.
  */
-public class User extends AbstractShardEntity{
+public class User extends AbstractShardEntity {
 
 	private static final long serialVersionUID = -2426776467504642746L;
-	
+
 	public static final int SEX_MALE = 0;
 	public static final int SEX_FEMALE = 1;
-	public static final int SEX_CONFIDENTIALITY = 2;
 
 	private String username;
 
@@ -30,7 +27,6 @@ public class User extends AbstractShardEntity{
 		this.password = password;
 		this.gender = gender;
 	}
-
 
 	public String getUsername() {
 		return username;
