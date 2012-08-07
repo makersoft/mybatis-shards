@@ -147,7 +147,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 	    	if (idGenerator != null) {
 	    		return idGenerator.extractShardId(this.extractId(parameter));
 	    	} else {
-//	    		// TODO(tomislav): also use shard resolution strategy if it returns only 1 shard; throw this error in config instead of here
+	    		// TODO(tomislav): also use shard resolution strategy if it returns only 1 shard; throw this error in config instead of here
 		        throw new RuntimeException("Can not use virtual sharding with non-shard resolving id gen");
 	    	}
 	    }
@@ -266,7 +266,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 
 	@Override
 	public int insert(String statement) {
-		return this.insert(statement, null);
+		return this.insert(statement, Maps.newHashMap());
 	}
 
 	@Override
@@ -300,7 +300,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 
 	@Override
 	public int update(String statement) {
-		return this.update(statement, null);
+		return this.update(statement, Maps.newHashMap());
 	}
 
 	@Override
@@ -368,7 +368,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 
 	@Override
 	public int delete(String statement) {
-		return delete(statement, null);
+		return delete(statement, Maps.newHashMap());
 	}
 
 	@Override
