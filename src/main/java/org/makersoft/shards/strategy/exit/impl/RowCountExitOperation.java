@@ -21,11 +21,11 @@ public class RowCountExitOperation implements ExitOperation {
 	
 	private Number getCount(List<Object> results) {
 		BigDecimal sum = new BigDecimal(0.0);
-		for (Object obj : results) {
-			sum = sum.add(new BigDecimal(obj.toString()));
-		}
-		
 		if(results != null){
+			for (Object obj : results) {
+				sum = sum.add(new BigDecimal(obj.toString()));
+			}
+		
 			Object obj = results.get(0);
 			if(obj instanceof Integer){
 				return sum.intValue();
