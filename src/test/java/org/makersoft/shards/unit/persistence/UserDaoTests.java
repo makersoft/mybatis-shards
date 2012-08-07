@@ -25,9 +25,9 @@ public class UserDaoTests {
 	@Autowired(required=true)
 	private UserDao userDao;
 	
-	public static int rowsCount = 500;
+	private String firstId;
 	
-	public static String firstId;
+	public static int rowsCount = 10000;
 	
 	@Test
 	@Transactional
