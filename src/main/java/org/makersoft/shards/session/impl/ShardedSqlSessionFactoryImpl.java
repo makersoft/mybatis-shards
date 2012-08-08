@@ -74,7 +74,6 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 			for (ShardId shardId : shardIdSet) {
 				// TODO(tomislav): we should change it so we specify control shard in configuration
 		        if (shardId.getId() == CONTROL_SHARD_ID) {
-//				if("0".equals(shardId.getId())){
 		        	controlSqlSessionFactoryToSet = implementor;
 		        }
 		        if(!uniqueShardIds.add(shardId)) {
