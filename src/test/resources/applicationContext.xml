@@ -39,20 +39,15 @@
 	 </bean>
 	 
     <bean id="shardedSqlSessionFactory" class="org.makersoft.shards.spring.ShardedSqlSessionFactoryBean">
+     	<property name="mapperLocations" value="classpath*:/mybatis/mapper/*Mapper.xml"/>
+        <property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
     	<property name="dataSources" ref="dsMap"/>
-       	<!--  
-    	<property name="dataSources">
-        	
-			<list>
-				 <ref local="lazyConnectionDataSource_1"/>
-				 <ref local="lazyConnectionDataSource_2"/>
-				 <ref local="lazyConnectionDataSource_3"/>
-	     	</list>
-	     	
-  		</property>
-    	 -->
-        <property name="mapperLocations" value="classpath*:/mybatis/mapper/*Mapper.xml"></property>
-        <property name="typeAliasesPackage" value="org.makersoft.shards.domain" ></property>
+        <property name="shardStrategyFactory">
+        	<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory"/>
+        </property>
+        <property name="idGenerator">
+        	<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"></bean>
+        </property>
     </bean>
      
     <!-- scan for mappers and let them be autowired

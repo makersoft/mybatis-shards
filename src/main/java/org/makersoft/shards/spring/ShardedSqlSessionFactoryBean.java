@@ -14,10 +14,8 @@ import org.makersoft.shards.ShardedConfiguration;
 import org.makersoft.shards.cfg.ShardConfiguration;
 import org.makersoft.shards.cfg.impl.ShardConfigurationImpl;
 import org.makersoft.shards.id.IdGenerator;
-import org.makersoft.shards.id.uuid.ShardedUUIDGenerator;
 import org.makersoft.shards.session.ShardedSqlSessionFactory;
 import org.makersoft.shards.strategy.ShardStrategyFactory;
-import org.makersoft.shards.strategy.UserShardStrategyFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -85,10 +83,6 @@ public class ShardedSqlSessionFactoryBean implements
 			shardConfigs.add(new ShardConfigurationImpl(shardId, dataSource, sessionFacotry));
 		}
 		
-		//临时设置
-		shardStrategyFactory = new UserShardStrategyFactory();
-		idGenerator = new ShardedUUIDGenerator();
-		
 		ShardedConfiguration configuration = new ShardedConfiguration(shardConfigs, this.shardStrategyFactory, idGenerator);
 		shardedSqlSessionFactory = configuration.buildShardedSessionFactory();
 	}
@@ -153,6 +147,10 @@ public class ShardedSqlSessionFactoryBean implements
 
 	public void setTypeAliasesPackage(String typeAliasesPackage) {
 		this.typeAliasesPackage = typeAliasesPackage;
+	}
+
+	public void setShardStrategyFactory(ShardStrategyFactory shardStrategyFactory) {
+		this.shardStrategyFactory = shardStrategyFactory;
 	}
 
 }
