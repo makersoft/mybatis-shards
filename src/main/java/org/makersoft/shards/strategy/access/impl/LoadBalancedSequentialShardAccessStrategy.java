@@ -1,3 +1,11 @@
+/*
+ * @(#)LoadBalancedSequentialShardAccessStrategy.java 2012-8-1 下午10:00:00
+ *
+ * Copyright (c) 2011-2012 Makersoft.org all rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *
+ */
 package org.makersoft.shards.strategy.access.impl;
 
 import java.util.List;
@@ -18,7 +26,6 @@ import org.makersoft.shards.utils.Iterables;
  * in advance, but the shards passed to a ShardAccessStrategy can vary between
  * invocations.
  * 
- * @author maxr@google.com (Max Ross)
  */
 public class LoadBalancedSequentialShardAccessStrategy extends
 		SequentialShardAccessStrategy {

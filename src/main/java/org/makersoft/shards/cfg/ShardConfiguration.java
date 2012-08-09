@@ -1,3 +1,11 @@
+/*
+ * @(#)ShardConfiguration.java 2012-8-1 下午10:00:00
+ *
+ * Copyright (c) 2011-2012 Makersoft.org all rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *
+ */
 package org.makersoft.shards.cfg;
 
 import java.util.List;
@@ -8,32 +16,31 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.makersoft.shards.ShardId;
 
 /**
+ * 用于描述分区的配置信息，不同的物理分区可包含不同的{@link SqlSessionFactory}和多个逻辑分区{@link ShardId}
  * 
+ * @version 2012-8-1 下午10:00:00
+ * @author Feng Kuok
  */
 public interface ShardConfiguration {
-//	/**
-//	 * @return the name that the {@link org.hibernate.SessionFactory} created
-//	 *         from this config will have
-//	 */
-//	String getShardSessionFactoryName();
-
+	
 	/**
-	 * @return unique id of the shard
+	 * @return 此物理分区的唯一ID
 	 */
 	Integer getShardId();
-	
+
+	/**
+	 * @return 此物理分区下所属的所有虚拟分区
+	 */
 	List<ShardId> getShardIds();
 
 	/**
-	 * @return the datasource for the shard
+	 * @return 此物理分区所对应的数据源
 	 */
 	DataSource getShardDataSource();
 
-//	/**
-//	 * @see org.hibernate.cfg.Environment#CACHE_REGION_PREFIX
-//	 * @return the cache region prefix for the shard
-//	 */
-//	String getShardCacheRegionPrefix();
-	
+	/**
+	 * @see SqlSessionFactory
+	 * @return 此物理分区的{@link SqlSessionFactory}
+	 */
 	SqlSessionFactory getSqlSessionFactory();
 }

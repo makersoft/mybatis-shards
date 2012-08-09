@@ -80,13 +80,13 @@ public abstract class BaseTest {
 		}
 	}
 	
-	public static DataSource createDs1DataSource() throws IOException,
+	public static DataSource createDataSource_1() throws IOException,
 			SQLException {
 		DataSource ds = createUnpooledDataSource(DS1_PROPERTIES);
 		return ds;
 	}
 	
-	public static DataSource createDs2DataSource() throws IOException,
+	public static DataSource createDataSource_2() throws IOException,
 		SQLException {
 		DataSource ds = createUnpooledDataSource(DS2_PROPERTIES);
 		return ds;

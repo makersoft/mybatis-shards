@@ -1,21 +1,11 @@
-/**
- * Copyright (C) 2007 Google Inc.
+/*
+ * @(#)ParallelShardOperationCallable.java 2012-8-1 下午10:00:00
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
-
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ * Copyright (c) 2011-2012 Makersoft.org all rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *
  */
-
 package org.makersoft.shards.strategy.access.impl;
 
 import java.util.List;
@@ -36,7 +26,6 @@ import org.makersoft.shards.strategy.exit.ExitStrategy;
  * this object has the ability to cancel the work being performed by all the
  * other threads.
  *
- * @author maxr@google.com (Max Ross)
  */
 class ParallelShardOperationCallable<T> implements Callable<Void> {
 

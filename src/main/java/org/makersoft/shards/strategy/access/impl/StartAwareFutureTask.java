@@ -1,21 +1,11 @@
-/**
- * Copyright (C) 2007 Google Inc.
+/*
+ * @(#)StartAwareFutureTask.java 2012-8-1 下午10:00:00
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
-
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ * Copyright (c) 2011-2012 Makersoft.org all rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *
  */
-
 package org.makersoft.shards.strategy.access.impl;
 
 import org.apache.commons.logging.Log;
@@ -45,8 +35,6 @@ import java.util.concurrent.FutureTask;
  * The cancelled flag is set to true, so we return right away.
  * cancel() returns the result of super.cancel() because runCalled is guaranteed to be false.
  *
- * @author maxr@google.com (Max Ross)
- * @author jbsteadman@google.com (JB Steadman)
  */
 class StartAwareFutureTask extends FutureTask<Void> {
 
