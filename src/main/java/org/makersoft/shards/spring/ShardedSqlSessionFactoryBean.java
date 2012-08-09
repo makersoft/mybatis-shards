@@ -153,4 +153,8 @@ public class ShardedSqlSessionFactoryBean implements
 		this.shardStrategyFactory = shardStrategyFactory;
 	}
 
+	public void setIdGenerator(IdGenerator idGenerator) {
+		this.idGenerator = idGenerator;
+	}
+
 }
