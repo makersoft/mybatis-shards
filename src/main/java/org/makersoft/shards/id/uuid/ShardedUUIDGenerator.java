@@ -14,7 +14,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.id.IdGenerator;
 import org.makersoft.shards.session.impl.ShardedSqlSessionImpl;
-import org.springframework.util.Assert;
+import org.makersoft.shards.utils.Assert;
 
 /**
  * 32位UUID

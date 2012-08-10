@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.util.Assert;
+import org.makersoft.shards.utils.Assert;
 
 /**
  * Base implementation for HasShadIdList. Takes care of null/empty checks.

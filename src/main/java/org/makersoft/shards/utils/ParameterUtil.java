@@ -24,12 +24,11 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.annotation.PrimaryKey;
-import org.springframework.util.Assert;
 
 /**
  * 参数处理类
  */
-public class ParameterUtil {
+public abstract class ParameterUtil {
 
 	private ParameterUtil() {
 

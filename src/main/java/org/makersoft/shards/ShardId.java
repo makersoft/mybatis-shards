@@ -8,8 +8,8 @@
  */
 package org.makersoft.shards;
 
+import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.StringUtil;
-import org.springframework.util.Assert;
 
 /**
  * Uniquely identifies a virtual shard

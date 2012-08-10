@@ -39,11 +39,11 @@ import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectOneCollector;
 import org.makersoft.shards.strategy.exit.impl.FirstNonNullResultExitStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategyData;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategyDataImpl;
+import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.Lists;
 import org.makersoft.shards.utils.Maps;
 import org.makersoft.shards.utils.ParameterUtil;
 import org.makersoft.shards.utils.Sets;
-import org.springframework.util.Assert;
 
 /**
  * 

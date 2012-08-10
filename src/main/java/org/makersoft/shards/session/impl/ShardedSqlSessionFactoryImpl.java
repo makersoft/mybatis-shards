@@ -27,11 +27,11 @@ import org.makersoft.shards.session.ShardedSqlSession;
 import org.makersoft.shards.session.ShardedSqlSessionFactory;
 import org.makersoft.shards.strategy.ShardStrategy;
 import org.makersoft.shards.strategy.ShardStrategyFactory;
+import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.Iterables;
 import org.makersoft.shards.utils.Lists;
 import org.makersoft.shards.utils.Maps;
 import org.makersoft.shards.utils.Sets;
-import org.springframework.util.Assert;
 
 /**
  * 

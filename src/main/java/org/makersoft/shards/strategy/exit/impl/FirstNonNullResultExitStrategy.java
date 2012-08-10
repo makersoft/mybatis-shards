@@ -11,7 +11,7 @@ package org.makersoft.shards.strategy.exit.impl;
 import org.makersoft.shards.Shard;
 import org.makersoft.shards.strategy.exit.ExitOperationsCollector;
 import org.makersoft.shards.strategy.exit.ExitStrategy;
-import org.springframework.util.Assert;
+import org.makersoft.shards.utils.Assert;
 
 /**
  * 

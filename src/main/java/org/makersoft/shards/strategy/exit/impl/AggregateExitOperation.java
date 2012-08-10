@@ -16,8 +16,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.makersoft.shards.strategy.exit.ExitOperation;
 import org.makersoft.shards.strategy.exit.ExitOperationUtils;
+import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.Lists;
-import org.springframework.util.Assert;
 
 /**
  * 

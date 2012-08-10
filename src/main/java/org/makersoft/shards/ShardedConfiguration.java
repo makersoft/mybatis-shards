@@ -23,8 +23,8 @@ import org.makersoft.shards.id.IdGenerator;
 import org.makersoft.shards.session.ShardedSqlSessionFactory;
 import org.makersoft.shards.session.impl.ShardedSqlSessionFactoryImpl;
 import org.makersoft.shards.strategy.ShardStrategyFactory;
+import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.Maps;
-import org.springframework.util.Assert;
 
 /**
  * 

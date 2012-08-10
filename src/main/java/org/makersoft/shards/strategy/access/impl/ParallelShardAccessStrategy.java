@@ -20,8 +20,8 @@ import org.makersoft.shards.ShardOperation;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.exit.ExitOperationsCollector;
 import org.makersoft.shards.strategy.exit.ExitStrategy;
+import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.Lists;
-import org.springframework.util.Assert;
 
 /**
  * 并行访问策略

@@ -12,14 +12,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.util.Assert;
-
 /**
  * Helper methods related to {@link Iterable}s.
  * 
  * @author maxr@google.com (Max Ross)
  */
-public class Iterables {
+public abstract class Iterables {
 
 	private Iterables() {
 	}

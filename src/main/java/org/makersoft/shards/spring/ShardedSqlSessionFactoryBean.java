@@ -24,11 +24,11 @@ import org.makersoft.shards.cfg.impl.ShardConfigurationImpl;
 import org.makersoft.shards.id.IdGenerator;
 import org.makersoft.shards.session.ShardedSqlSessionFactory;
 import org.makersoft.shards.strategy.ShardStrategyFactory;
+import org.makersoft.shards.utils.Assert;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 
 /**
  * 

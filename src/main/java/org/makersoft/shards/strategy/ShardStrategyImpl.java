@@ -11,7 +11,7 @@ package org.makersoft.shards.strategy;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
-import org.springframework.util.Assert;
+import org.makersoft.shards.utils.Assert;
 
 /**
  * Class description goes here.
