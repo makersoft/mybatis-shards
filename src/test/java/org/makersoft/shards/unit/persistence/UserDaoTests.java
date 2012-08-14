@@ -1,6 +1,7 @@
 package org.makersoft.shards.unit.persistence;
 
 import java.util.List;
+import java.util.Random;
 
 import junit.framework.Assert;
 
@@ -29,6 +30,8 @@ public class UserDaoTests {
 	
 	public static int rowsCount = 10000;
 	
+	private Random random = new Random();
+	
 	@Test
 	@Transactional
 	public void testInsert() throws Exception{
@@ -37,6 +40,7 @@ public class UserDaoTests {
 			User user = new User();
 			user.setUsername("makersoft" + i);
 			user.setPassword("makersoft" + i);
+			user.setAge(random.nextInt(30));
 			
 			if(i % 2 == 0){
 				user.setGender(User.SEX_MALE);

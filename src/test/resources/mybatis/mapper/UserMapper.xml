@@ -6,9 +6,9 @@
 
 	<insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
 		INSERT INTO ${prefix}maker_shards_user${suffix} 
-			(id, username, password, gender) 
+			(id, username, password, age, gender) 
 		VALUES
-			(#{id}, #{username},#{password}, #{gender})
+			(#{id}, #{username}, #{password}, #{age}, #{gender})
 	</insert>
 	
 	<select id="getUserById" parameterType="string" resultType="org.makersoft.shards.domain.User">
