@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 多数据源事务管理器单元测试
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
+@ContextConfiguration(locations = { "classpath*:/org/makersoft/shards/unit/transaction/applicationContext.xml" })
 @TransactionConfiguration(transactionManager = "multiDataSourcesTransactionManager", defaultRollback = false)
 @ActiveProfiles("test")
 public class MultipleDataSourcesTransactionManagerTests {
