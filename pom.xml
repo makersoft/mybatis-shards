@@ -10,6 +10,14 @@
 	<name>mybatis-shards</name>
 	<url>http://www.makersoft.org</url>
 	
+	<repositories>
+		<repository>
+			<id>alibaba</id>
+			<name>alibaba</name>
+			<url>http://code.alibabatech.com/mvn/releases/</url>
+		</repository>
+	</repositories>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -107,6 +115,20 @@
 			<groupId>asm</groupId>
 			<artifactId>asm</artifactId>
 			<version>3.3.1</version>
+		</dependency>
+		
+		<!-- 
+		<dependency>
+			<groupId>net.sourceforge</groupId>
+       		<artifactId>jsqlparser</artifactId>
+      	    <version>0.7.0</version>
+		</dependency>
+		 -->
+		 
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>0.2.5</version>
 		</dependency>
 		
 		<!-- dependency for test -->
