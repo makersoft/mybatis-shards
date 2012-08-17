@@ -30,10 +30,11 @@ public class MySQLDialect implements Dialect {
 
 	@Override
 	public String getLimitString(String sql, int offset, int limit) {
+		StringBuffer pagingSelect = new StringBuffer(sql.length() + 40).append(sql);
 		if (offset > 0) {
-			return sql + " limit " + offset + ", " + limit;
+			return pagingSelect.append(" limit ").append(offset).append(", ").append(limit).toString();
 		} else {
-			return sql + " limit " + limit;
+			return pagingSelect.append(" limit ").append(limit).toString();
 		}
 	}
 
