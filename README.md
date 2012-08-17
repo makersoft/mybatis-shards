@@ -1,3 +1,4 @@
+[![][Logo]][1] 
 # [Mybatis-Shards][1] 专业的Mybatis数据库切分框架
 
 ## Mybatis Shards简介
@@ -22,3 +23,4 @@ Mybatis Shards采用无侵入性的方式，无需更改现有程序代码，只
   [1]: http://www.makersoft.org
   [2]: http://code.alibabatech.com/wiki/display/CobarClient/Home
   [3]: http://code.google.com/p/shardbatis/
+  [Logo]:https://raw.github.com/makersoft/makersoft.github.com/master/images/makersoft-logo.png
