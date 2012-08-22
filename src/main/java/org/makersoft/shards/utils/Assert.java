@@ -14,7 +14,11 @@ package org.makersoft.shards.utils;
  * @version 2012-8-10 下午2:48:06
  * @author Feng Kuok
  */
-public abstract class Assert {
+public class Assert {
+	
+	private Assert(){
+		
+	}
 
 	/**
 	 * Assert a boolean expression, throwing
