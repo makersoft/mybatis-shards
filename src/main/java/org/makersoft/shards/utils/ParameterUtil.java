@@ -98,6 +98,7 @@ public abstract class ParameterUtil {
 				parameter.put("prefix", shardId.getPrefix());
 				parameter.put("suffix", shardId.getSuffix());
 
+				return parameter;
 			} else if (obj instanceof Object) {
 				Map<String, Object> parameter = PropertyUtils.describe(obj);
 				parameter.put("prefix", shardId.getPrefix());
