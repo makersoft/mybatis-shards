@@ -11,7 +11,6 @@ package org.makersoft.shards.utils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -181,64 +180,6 @@ public abstract class ParameterUtil {
 		}
 
 		return null;
-	}
-	
-	
-	public static boolean isNumberic(Type type){
-		String typeName = type.toString();
-		if ("long".equalsIgnoreCase(typeName)
-				|| "java.lang.Long".equals(typeName)
-				|| "int".equalsIgnoreCase(typeName)
-				|| "java.lang.Integer".equals(typeName)) {
-			
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public static boolean isPrimitiveParameter(Object obj){
-		if(obj instanceof String || obj instanceof Number){
-			return true;
-		}
-		return false;
-	}
-	
-	public static void main(String[] args) {
-//		Test test = new Test();
-//		test.setId(111L);
-//		test.setName("test");
-//		System.out.println(extractPrimaryKey(test));
-		long i = 0;
-		Long j = 1L;
-		int k = 2;
-		Integer m = 3;
-		String string = "ssss";
-		System.out.println(isPrimitiveParameter(i));
-		System.out.println(isPrimitiveParameter(j));
-		System.out.println(isPrimitiveParameter(k));
-		System.out.println(isPrimitiveParameter(m));
-		System.out.println(isPrimitiveParameter(string));
-	}
-	
-	static class Test{
-		@PrimaryKey
-		private Long id;
-		private String name;
-		public Long getId() {
-			return id;
-		}
-		public void setId(Long id) {
-			this.id = id;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		
-		
 	}
 
 }
