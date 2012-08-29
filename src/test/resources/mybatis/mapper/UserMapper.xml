@@ -23,6 +23,10 @@
 		SELECT * FROM ${prefix}maker_shards_user${suffix}
 	</select>
 	
+	<select id="findAllUsersOrderByAge" resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM ${prefix}maker_shards_user${suffix} order by age
+	</select>
+	
 	<select id="findByGender" resultType="org.makersoft.shards.domain.User">
 		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender};
 	</select>
