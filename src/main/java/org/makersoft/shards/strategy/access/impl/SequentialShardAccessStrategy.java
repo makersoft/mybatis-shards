@@ -30,6 +30,9 @@ public class SequentialShardAccessStrategy implements ShardAccessStrategy {
 			ExitStrategy<T> exitStrategy,
 			ExitOperationsCollector exitOperationsCollector) {
 		
+		/*
+		 * TODO:将双重循环优化为一次循环Map<ShardId,Shard>，便于代码可读性。
+		 */
 		execute: for (Shard shard : getNextOrderingOfShards(shards)) {
 			for(ShardId shardId : shard.getShardIds()){
 				if (exitStrategy.addResult(operation.execute(shard.establishSqlSession(), shardId), shard)) {
