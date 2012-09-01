@@ -30,4 +30,6 @@ public interface ShardMergeStrategy {
 	void setInsertPrefix(String insertPrefix);
 
 	void setSelectPrefix(String selectPrefix);
+	
+	void setDropTablePrefix(String dropTablePrefix);
 }
