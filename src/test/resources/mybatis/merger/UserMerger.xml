@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper">
+
+	<!-- merger -->
+	<update id="UserMapper.getAllCount.create">
+		CREATE CACHED LOCAL TEMPORARY TABLE IF NOT EXISTS user_count(total int)
+	</update>
+	
+	<update id="UserMapper.getAllCount.drop">
+		DROP TABLE IF EXISTS user_count
+	</update>
+	
+	<insert id="UserMapper.getAllCount.insert" parameterType="int">
+		INSERT INTO user_count 
+			(total) 
+		VALUES
+			(#{total})
+	</insert>
+	
+	<select id="UserMapper.getAllCount.select" resultType="int">
+		SELECT sum(total) FROM user_count
+	</select>
+
+</mapper>

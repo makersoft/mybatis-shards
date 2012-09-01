@@ -122,9 +122,13 @@
 			<version>3.3.1</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>net.sourceforge</groupId> <artifactId>jsqlparser</artifactId> 
-			<version>0.7.0</version> </dependency> -->
-
+		<!-- -->
+		<dependency> 
+			<groupId>net.sourceforge</groupId> 
+			<artifactId>jsqlparser</artifactId> 
+			<version>0.7.0</version> 
+		</dependency>
+ 		
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
@@ -172,6 +176,13 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.12</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<!-- h2 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.3.168</version>
 		</dependency>
 
 	</dependencies>

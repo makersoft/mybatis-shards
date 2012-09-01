@@ -31,7 +31,7 @@
 		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender};
 	</select>
 
-	<select id="UserMapper.count" resultType="int">
+	<select id="UserMapper.getAllCount" resultType="int">
 		SELECT count(*) FROM ${prefix}maker_shards_user${suffix}
 	</select>
 
@@ -54,5 +54,5 @@
 	<delete id="deleteAllUser">
 		DELETE FROM ${prefix}maker_shards_user${suffix}
 	</delete>
-
+	
 </mapper>

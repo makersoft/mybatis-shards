@@ -81,7 +81,7 @@ public class ShardedSqlSessionTests extends BaseTest{
 				  
 				  ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy(shardIds);
 				  ShardAccessStrategy pas = new SequentialShardAccessStrategy();
-				  return new ShardStrategyImpl(pss, prs, pas);
+				  return new ShardStrategyImpl(pss, prs, pas,null);
 			  }
 		  });
 	  }

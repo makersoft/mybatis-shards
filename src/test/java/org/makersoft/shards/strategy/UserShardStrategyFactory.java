@@ -12,6 +12,7 @@ import org.makersoft.shards.ShardId;
 import org.makersoft.shards.domain.User;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.access.impl.ParallelShardAccessStrategy;
+import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategyData;
 import org.makersoft.shards.strategy.resolution.impl.AllShardsShardResolutionStrategy;
@@ -22,12 +23,18 @@ import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
  */
 public class UserShardStrategyFactory implements ShardStrategyFactory {
 
+	private ShardMergeStrategy shardMergeStrategy;
+	
+	public void setShardMergeStrategy(ShardMergeStrategy shardMergeStrategy) {
+		this.shardMergeStrategy = shardMergeStrategy;
+	}
+
 	@Override
 	public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
 		ShardSelectionStrategy pss = this.getShardSelectionStrategy(shardIds);
 		ShardResolutionStrategy prs = this.getShardResolutionStrategy(shardIds);
 		ShardAccessStrategy pas = this.getShardAccessStrategy();
-		return new ShardStrategyImpl(pss, prs, pas);
+		return new ShardStrategyImpl(pss, prs, pas, shardMergeStrategy);
 	}
 	
 	private ShardSelectionStrategy getShardSelectionStrategy(final List<ShardId> shardIds){

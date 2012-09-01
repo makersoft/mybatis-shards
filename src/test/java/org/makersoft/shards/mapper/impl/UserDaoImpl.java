@@ -42,7 +42,7 @@ public class UserDaoImpl extends SqlSessionDaoSupport implements UserDao{
 
 	@Override
 	public int getAllCount() {
-		return super.getSqlSession().<Integer>selectOne("UserMapper.count");
+		return super.getSqlSession().<Integer>selectOne("UserMapper.getAllCount");
 	}
 
 	@Override

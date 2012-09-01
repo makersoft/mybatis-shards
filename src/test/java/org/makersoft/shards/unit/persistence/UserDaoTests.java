@@ -1,5 +1,10 @@
 package org.makersoft.shards.unit.persistence;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -123,5 +128,33 @@ public class UserDaoTests {
 		
 		int rows = userDao.deleteAll();
 		Assert.assertEquals(rowsCount, rows);
+	}
+	
+	@Test
+	public void testForeach() throws Exception {
+
+		String sqlCreate = "create cached local temporary table if not exists test(id int)";
+		String sqlQuery = "select sum(id) from test";
+		Class.forName("org.h2.Driver");
+		Connection conn = DriverManager.getConnection("jdbc:h2:file:~/.h2/mybatis-shards;AUTO_SERVER=TRUE;PAGE_SIZE=1024", "sa", "");
+		Statement stmt = conn.createStatement();
+//		conn.setAutoCommit(false);
+		try {
+			int effectiveCount = stmt.executeUpdate(sqlCreate);
+			for (int i = 0; i < 1000000; i++) {
+				stmt.executeUpdate("insert into test (id) values(" + i + ")");
+//				ResultSet rest = stmt.executeQuery(sqlQuery);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			if(stmt!= null){
+				stmt.close();
+			}
+			if(conn != null){
+				conn.close();
+			}
+		}
 	}
 }

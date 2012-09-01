@@ -27,6 +27,26 @@
         <property name="mapperLocations" value="classpath*:/org/makersoft/shards/mapper/*Mapper.xml"/>
         <property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
     </bean>-->
+    
+    
+  	
+  	<bean id="shardMergeStrategy" class="org.makersoft.shards.strategy.merge.impl.DBShardMergeStrategy">
+  		<property name="sqlSession" >
+  			<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		    	<constructor-arg >
+		    		<bean class="org.mybatis.spring.SqlSessionFactoryBean">
+		    		 	<property name="dataSource" ref="lazyConnectionDataSource_h2" />
+		        		<property name="mapperLocations" value="classpath*:/mybatis/merger/*Merger.xml"/>
+		    		</bean>
+		    	</constructor-arg>
+		  	</bean>
+  		</property>
+  		<property name="createTablePrefix" value=".create"/>
+  		<property name="insertPrefix" value=".insert"/>
+  		<property name="selectPrefix" value=".select"/>
+  		<property name="dropTablePrefix" value=".drop"/>
+  	</bean>
+    
     <!-- Construct Map -->
 	<bean id="dsMap" class="java.util.HashMap">
 		<constructor-arg>
@@ -43,7 +63,9 @@
         <property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
     	<property name="dataSources" ref="dsMap"/>
         <property name="shardStrategyFactory">
-        	<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory"/>
+        	<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory">
+        		<property name="shardMergeStrategy" ref="shardMergeStrategy"/>
+        	</bean>
         </property>
         <property name="idGenerator">
         	<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"></bean>
@@ -67,6 +89,7 @@
 				 <ref local="lazyConnectionDataSource_1"/>
 				 <ref local="lazyConnectionDataSource_2"/>
 				 <ref local="lazyConnectionDataSource_3"/>
+				 <ref local="lazyConnectionDataSource_h2"/>
 	     	</list>
 	     	
     	</property>
@@ -140,6 +163,14 @@
 			<property name="maxWait" value="1800" />
 		</bean>
 		
+		<bean id="dataSource_h2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+			<property name="driverClassName" value="${h2.jdbc.driver}" />
+			<property name="url" value="${h2.jdbc.url}" />
+			<property name="username" value="${h2.jdbc.username}" />
+			<property name="password" value="${h2.jdbc.password}" />
+			<property name="defaultAutoCommit" value="false" />
+		</bean>
+		
 		<bean id="lazyConnectionDataSource_1" name="name_1" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"> 
 			<property name="targetDataSource" ref="dataSource_1"/>  
 		</bean> 
@@ -150,6 +181,10 @@
 		
 		<bean id="lazyConnectionDataSource_3" name="name_3" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">  
 			<property name="targetDataSource" ref="dataSource_3"/>  
+		</bean> 
+		
+		<bean id="lazyConnectionDataSource_h2" name="name_h2" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">  
+			<property name="targetDataSource" ref="dataSource_h2"/>  
 		</bean> 
 		<!-- 
 		<makersoft:datasources>
