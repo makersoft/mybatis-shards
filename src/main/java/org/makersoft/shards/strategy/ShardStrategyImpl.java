@@ -9,6 +9,7 @@
 package org.makersoft.shards.strategy;
 
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
+import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
 import org.makersoft.shards.utils.Assert;
@@ -25,18 +26,23 @@ public class ShardStrategyImpl implements ShardStrategy {
 	private ShardResolutionStrategy shardResolutionStrategy;
 
 	private ShardAccessStrategy shardAccessStrategy;
+	
+	private ShardMergeStrategy shardMergeStrategy;
 
 	public ShardStrategyImpl(ShardSelectionStrategy shardSelectionStrategy,
 			ShardResolutionStrategy shardResolutionStrategy,
-			ShardAccessStrategy shardAccessStrategy) {
+			ShardAccessStrategy shardAccessStrategy,
+			ShardMergeStrategy shardMergeStrategy) {
 		
 		Assert.notNull(shardSelectionStrategy);
 		Assert.notNull(shardResolutionStrategy);
 		Assert.notNull(shardAccessStrategy);
+		Assert.notNull(shardMergeStrategy);
 		
 		this.shardSelectionStrategy = shardSelectionStrategy;
 		this.shardResolutionStrategy = shardResolutionStrategy;
 		this.shardAccessStrategy = shardAccessStrategy;
+		this.shardMergeStrategy = shardMergeStrategy;
 	}
 
 	@Override
@@ -54,4 +60,9 @@ public class ShardStrategyImpl implements ShardStrategy {
 		return shardAccessStrategy;
 	}
 
+	@Override
+	public ShardMergeStrategy getShardMergeStrategy() {
+		return shardMergeStrategy;
+	}
+	
 }
