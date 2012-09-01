@@ -193,7 +193,8 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		return shardStrategy.getShardAccessStrategy().<T>apply(this.shardIdListToShardList(shardIds),
 				shardOp,
 				new FirstNonNullResultExitStrategy<T>(),
-				new ExitOperationsSelectOneCollector(srsd.getStatement()));
+				new ExitOperationsSelectOneCollector(new AdHocSelectFactoryImpl(
+						srsd.getStatement(), srsd.getParameter(), null, RowBounds.DEFAULT), shardStrategy.getShardMergeStrategy()));
 	}
 	
 	
@@ -230,7 +231,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		
 		return new ShardSelectImpl(potentialShards, new AdHocSelectFactoryImpl(
 				statement, parameter, null, null),
-				shardStrategy.getShardAccessStrategy()).<T>getSingleResult();
+				shardStrategy.getShardAccessStrategy(), shardStrategy.getShardMergeStrategy()).<T>getSingleResult();
 
 	}
 
@@ -252,7 +253,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 		
 		return new ShardSelectImpl(potentialShards, new AdHocSelectFactoryImpl(
 				statement, parameter, null, rowBounds),
-				shardStrategy.getShardAccessStrategy()).<E>getResultList();
+				shardStrategy.getShardAccessStrategy(), shardStrategy.getShardMergeStrategy()).<E>getResultList();
 	}
 
 	@Override
@@ -269,7 +270,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession,ShardIdResolver 
 	public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
 		return new ShardSelectImpl(shards, new AdHocSelectFactoryImpl(
 				statement, parameter, mapKey, rowBounds),
-				shardStrategy.getShardAccessStrategy()).getResultMap();
+				shardStrategy.getShardAccessStrategy(), shardStrategy.getShardMergeStrategy()).getResultMap();
 	}
 
 	@Override
