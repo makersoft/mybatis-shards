@@ -22,6 +22,7 @@ import org.makersoft.shards.strategy.exit.impl.ConcatenateListsExitStrategy;
 import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectListCollector;
 import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectOneCollector;
 import org.makersoft.shards.strategy.exit.impl.SelectOneExitStrategy;
+import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
 import org.makersoft.shards.utils.ParameterUtil;
 
 /**
@@ -34,6 +35,8 @@ public class ShardSelectImpl implements ShardSelect {
 	private final SelectFactory selectFactory;
 	
 	private final ShardAccessStrategy shardAccessStrategy;
+	
+	private final ShardMergeStrategy shardMergeStrategy;
 
 	/**
 	 * The queryCollector is not used in ShardedQueryImpl as it would require
@@ -44,10 +47,11 @@ public class ShardSelectImpl implements ShardSelect {
 	private final ExitOperationsSelectListCollector queryCollector;
 
 	public ShardSelectImpl(List<Shard> shards, SelectFactory selectFactory,
-			ShardAccessStrategy shardAccessStrategy) {
+			ShardAccessStrategy shardAccessStrategy, ShardMergeStrategy shardMergeStrategy) {
 		this.shards = shards;
 		this.selectFactory = selectFactory;
 		this.shardAccessStrategy = shardAccessStrategy;
+		this.shardMergeStrategy = shardMergeStrategy;
 		this.queryCollector = new ExitOperationsSelectListCollector(
 				selectFactory.getRowBounds());
 	}
@@ -117,8 +121,7 @@ public class ShardSelectImpl implements ShardSelect {
 				shards,
 				shardOp,
 				new SelectOneExitStrategy(),
-				new ExitOperationsSelectOneCollector(selectFactory
-						.getStatement()));
+				new ExitOperationsSelectOneCollector(selectFactory, shardMergeStrategy));
 	}
 
 }
