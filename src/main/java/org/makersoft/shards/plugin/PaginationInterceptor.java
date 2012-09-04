@@ -23,7 +23,7 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import org.makersoft.shards.MybatisShardsException;
+import org.makersoft.shards.MyBatisShardsException;
 import org.makersoft.shards.plugin.spi.Dialect;
 
 /**
@@ -135,7 +135,7 @@ public class PaginationInterceptor implements Interceptor {
 		try {
 			dialect = (Dialect) Class.forName(dialectClass).newInstance();
 		} catch (Exception e) {
-			throw new MybatisShardsException("Can not create dialect instance by dialect:"
+			throw new MyBatisShardsException("Can not create dialect instance by dialect:"
 					+ dialectClass, e);
 		}
 	}
