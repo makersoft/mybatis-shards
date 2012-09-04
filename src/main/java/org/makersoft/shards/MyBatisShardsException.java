@@ -14,23 +14,23 @@ package org.makersoft.shards;
  * @version 2012-8-17 下午3:02:33
  * @author Feng Kuok
  */
-public class MybatisShardsException extends RuntimeException {
+public class MyBatisShardsException extends RuntimeException {
 
 	private static final long serialVersionUID = 7397841257210139784L;
 
-	public MybatisShardsException() {
+	public MyBatisShardsException() {
 		super();
 	}
 
-	public MybatisShardsException(String message) {
+	public MyBatisShardsException(String message) {
 		super(message);
 	}
 
-	public MybatisShardsException(String message, Throwable cause) {
+	public MyBatisShardsException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public MybatisShardsException(Throwable cause) {
+	public MyBatisShardsException(Throwable cause) {
 		super(cause);
 	}
 
