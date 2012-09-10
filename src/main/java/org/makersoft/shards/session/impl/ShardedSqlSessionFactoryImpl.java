@@ -103,6 +103,7 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 		this.shardStrategy = shardStrategyFactory.newShardStrategy(shardIds);
 		
 		this.idGenerator = idGenerator;
+		
 	}
 
 	private SqlSessionFactory getAnyFactory() {
@@ -173,7 +174,21 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 
 	@Override
 	public Configuration getConfiguration() {
+		//TODO : 此处应该合并两个Mapper并返回（垂直切分时考虑）
 		return getAnyFactory().getConfiguration();
+//		return new Configuration(){
+//			
+//			@Override
+//			public boolean hasMapper(Class<?> type) {
+//				for(SqlSessionFactory factory : getSqlSessionFactories()){
+//					if(factory.getConfiguration().hasMapper(type)){
+//						return true;
+//					}
+//				}
+//				
+//				return false;
+//			}
+//		};
 	}
 	
 	@Override
