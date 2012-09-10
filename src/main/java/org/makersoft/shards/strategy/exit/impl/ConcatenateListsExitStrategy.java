@@ -20,16 +20,18 @@ import org.makersoft.shards.utils.Lists;
  */
 public class ConcatenateListsExitStrategy implements ExitStrategy<List<Object>> {
 
-	private final List<Object> result = Lists.newArrayList();
+	private final List<Object> nonNullResult = Lists.newArrayList();
 
 	public synchronized boolean addResult(List<Object> oneResult, Shard shard) {
-		result.addAll(oneResult);
+		if(nonNullResult != null){
+			nonNullResult.add(oneResult);
+		}
 		return false;
 	}
 
 	@Override
 	public List<Object> compileResults(ExitOperationsCollector exitOperationsCollector) {
-		return exitOperationsCollector.apply(result);
+		return exitOperationsCollector.apply(nonNullResult);
 	}
 	
 }

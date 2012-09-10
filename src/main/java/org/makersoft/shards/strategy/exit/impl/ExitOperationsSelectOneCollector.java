@@ -13,21 +13,17 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.makersoft.shards.select.SelectFactory;
 import org.makersoft.shards.strategy.exit.ExitOperationsCollector;
-import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
 
 /**
  * 
  */
+@Deprecated
 public class ExitOperationsSelectOneCollector implements ExitOperationsCollector {
 
-	private final SelectFactory selectFactory;
 	private final String statement;
-	private final ShardMergeStrategy shardMergeStrategy;
 	
-	public ExitOperationsSelectOneCollector(SelectFactory selectFactory, ShardMergeStrategy shardMergeStrategy){
-		this.selectFactory = selectFactory;
+	public ExitOperationsSelectOneCollector(SelectFactory selectFactory){
 		this.statement = selectFactory.getStatement();
-		this.shardMergeStrategy = shardMergeStrategy;
 	}
 	
 	@Override
@@ -42,8 +38,6 @@ public class ExitOperationsSelectOneCollector implements ExitOperationsCollector
 			return new AggregateExitOperation("max").apply(result);
 		}else if(statement.endsWith("avg")){
 			return new AvgResultsExitOperation().apply(result);
-		}else if(shardMergeStrategy != null){
-			return shardMergeStrategy.merge(statement, selectFactory.getParameter(), selectFactory.getRowBounds(), result);
 		}
 
 		return result;
@@ -51,7 +45,7 @@ public class ExitOperationsSelectOneCollector implements ExitOperationsCollector
 
 	@Override
 	public void setSqlSessionFactory(SqlSessionFactory sessionFactory) {
-
+		
 	}
 
 }

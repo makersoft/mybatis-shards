@@ -40,6 +40,7 @@ public class AggregateExitOperation implements ExitOperation {
 			this.aggregate = s;
 		}
 
+		@SuppressWarnings("unused")
 		public String getAggregate() {
 			return aggregate;
 		}
@@ -58,7 +59,7 @@ public class AggregateExitOperation implements ExitOperation {
 			return Lists.newArrayList((Object)0);
 		}
 			
-		String className = result.get(0).getClass().getName();
+//		String className = result.get(0).getClass().getName();
 		
 		List<Object> nonNullResults = ExitOperationUtils.getNonNullList(result);
 		
