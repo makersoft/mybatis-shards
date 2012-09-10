@@ -11,6 +11,6 @@ package org.makersoft.shards.annotation;
 /**
  * 
  */
-public @interface ShardedEntity {
+public @interface ShardEntity {
 
 }
