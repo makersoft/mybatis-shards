@@ -9,19 +9,21 @@
 package org.makersoft.shards.strategy;
 
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
-import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
+import org.makersoft.shards.strategy.reduce.ShardReduceStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
 
 /**
- * 
+ * @author Feng Kuok
  */
 public interface ShardStrategy {
+	
 	ShardSelectionStrategy getShardSelectionStrategy();
 
 	ShardResolutionStrategy getShardResolutionStrategy();
 
 	ShardAccessStrategy getShardAccessStrategy();
 	
-	ShardMergeStrategy getShardMergeStrategy();
+	ShardReduceStrategy getShardReduceStrategy();
+	
 }

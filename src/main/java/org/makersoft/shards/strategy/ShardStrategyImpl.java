@@ -9,15 +9,13 @@
 package org.makersoft.shards.strategy;
 
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
-import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
+import org.makersoft.shards.strategy.reduce.ShardReduceStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
 import org.makersoft.shards.utils.Assert;
 
 /**
- * Class description goes here.
- * 
- * 
+ * @author Feng Kuok 
  */
 public class ShardStrategyImpl implements ShardStrategy {
 
@@ -26,23 +24,22 @@ public class ShardStrategyImpl implements ShardStrategy {
 	private ShardResolutionStrategy shardResolutionStrategy;
 
 	private ShardAccessStrategy shardAccessStrategy;
-	
-	private ShardMergeStrategy shardMergeStrategy;
+
+	private ShardReduceStrategy shardReduceStrategy;
 
 	public ShardStrategyImpl(ShardSelectionStrategy shardSelectionStrategy,
 			ShardResolutionStrategy shardResolutionStrategy,
-			ShardAccessStrategy shardAccessStrategy,
-			ShardMergeStrategy shardMergeStrategy) {
-		
+			ShardAccessStrategy shardAccessStrategy, ShardReduceStrategy shardReduceStrategy) {
+
 		Assert.notNull(shardSelectionStrategy);
 		Assert.notNull(shardResolutionStrategy);
 		Assert.notNull(shardAccessStrategy);
-		Assert.notNull(shardMergeStrategy);
-		
+		Assert.notNull(shardReduceStrategy);
+
 		this.shardSelectionStrategy = shardSelectionStrategy;
 		this.shardResolutionStrategy = shardResolutionStrategy;
 		this.shardAccessStrategy = shardAccessStrategy;
-		this.shardMergeStrategy = shardMergeStrategy;
+		this.shardReduceStrategy = shardReduceStrategy;
 	}
 
 	@Override
@@ -61,8 +58,8 @@ public class ShardStrategyImpl implements ShardStrategy {
 	}
 
 	@Override
-	public ShardMergeStrategy getShardMergeStrategy() {
-		return shardMergeStrategy;
+	public ShardReduceStrategy getShardReduceStrategy() {
+		return shardReduceStrategy;
 	}
-	
+
 }
