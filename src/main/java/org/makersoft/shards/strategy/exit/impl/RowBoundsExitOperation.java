@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
 import org.makersoft.shards.strategy.exit.ExitOperation;
-import org.makersoft.shards.strategy.exit.ExitOperationUtils;
 
 /**
  * 
@@ -28,15 +27,13 @@ public class RowBoundsExitOperation implements ExitOperation {
 
 	@Override
 	public List<Object> apply(List<Object> results) {
-		List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
-		
-	    if(nonNullResults.size() <= rowBounds.getOffset()) {
+	    if(results.size() <= rowBounds.getOffset()) {
 	      return Collections.emptyList();
 	    }
 	    
-	    results = nonNullResults.subList(rowBounds.getOffset(), nonNullResults.size());
+	    results = results.subList(rowBounds.getOffset(), results.size());
 	    if(rowBounds.getLimit() < Integer.MAX_VALUE){
-	    	results = nonNullResults.subList(0, Math.min(nonNullResults.size(), rowBounds.getLimit()));
+	    	results = results.subList(0, Math.min(results.size(), rowBounds.getLimit()));
 	    }
 	    
 		return results;
