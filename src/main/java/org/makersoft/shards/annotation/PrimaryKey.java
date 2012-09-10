@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 主键，只支持Long,Integer,String 3种类型
+ * 标注主键（暂时只支持Long,Integer,String 3种类型）
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
