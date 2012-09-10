@@ -19,10 +19,9 @@ import org.makersoft.shards.select.SelectFactory;
 import org.makersoft.shards.select.ShardSelect;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.exit.impl.ConcatenateListsExitStrategy;
-import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectListCollector;
-import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectOneCollector;
+import org.makersoft.shards.strategy.exit.impl.ExitOperationsSelectCollector;
 import org.makersoft.shards.strategy.exit.impl.SelectOneExitStrategy;
-import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
+import org.makersoft.shards.strategy.reduce.ShardReduceStrategy;
 import org.makersoft.shards.utils.ParameterUtil;
 
 /**
@@ -36,24 +35,20 @@ public class ShardSelectImpl implements ShardSelect {
 	
 	private final ShardAccessStrategy shardAccessStrategy;
 	
-	private final ShardMergeStrategy shardMergeStrategy;
-
 	/**
 	 * The queryCollector is not used in ShardedQueryImpl as it would require
 	 * this implementation to parse the query string and extract which exit
 	 * operations would be appropriate. This member is a place holder for future
 	 * development.
 	 */
-	private final ExitOperationsSelectListCollector queryCollector;
+	private final ExitOperationsSelectCollector selectCollector;
 
 	public ShardSelectImpl(List<Shard> shards, SelectFactory selectFactory,
-			ShardAccessStrategy shardAccessStrategy, ShardMergeStrategy shardMergeStrategy) {
+			ShardAccessStrategy shardAccessStrategy, ShardReduceStrategy shardReduceStrategy) {
 		this.shards = shards;
 		this.selectFactory = selectFactory;
 		this.shardAccessStrategy = shardAccessStrategy;
-		this.shardMergeStrategy = shardMergeStrategy;
-		this.queryCollector = new ExitOperationsSelectListCollector(
-				selectFactory.getRowBounds());
+		this.selectCollector = new ExitOperationsSelectCollector(selectFactory, shardReduceStrategy);
 	}
 
 	@Override
@@ -73,7 +68,7 @@ public class ShardSelectImpl implements ShardSelect {
 		};
 
 		return (List<E>) shardAccessStrategy.apply(shards, shardOp,
-				new ConcatenateListsExitStrategy(), queryCollector);
+				new ConcatenateListsExitStrategy(), selectCollector);
 	}
 
 	@Override
@@ -120,8 +115,7 @@ public class ShardSelectImpl implements ShardSelect {
 		return (T) shardAccessStrategy.apply(
 				shards,
 				shardOp,
-				new SelectOneExitStrategy(),
-				new ExitOperationsSelectOneCollector(selectFactory, shardMergeStrategy));
+				new SelectOneExitStrategy(), selectCollector);
 	}
 
 }
