@@ -9,22 +9,22 @@
 package org.makersoft.shards.strategy.exit.impl;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.makersoft.shards.Shard;
 import org.makersoft.shards.strategy.exit.ExitOperationsCollector;
 import org.makersoft.shards.strategy.exit.ExitStrategy;
-import org.makersoft.shards.utils.Lists;
 
 /**
  * Threadsafe ExistStrategy that concatenates all the lists that are added.
  */
 public class ConcatenateListsExitStrategy implements ExitStrategy<List<Object>> {
 
-	private final List<Object> nonNullResult = Lists.newArrayList();
+	private final List<Object> nonNullResult = new CopyOnWriteArrayList<Object>();
 
-	public synchronized boolean addResult(List<Object> oneResult, Shard shard) {
-		if(nonNullResult != null){
-			nonNullResult.add(oneResult);
+	public boolean addResult(List<Object> oneResult, Shard shard) {
+		if(oneResult != null && !oneResult.isEmpty()){
+			nonNullResult.addAll(oneResult);
 		}
 		return false;
 	}
