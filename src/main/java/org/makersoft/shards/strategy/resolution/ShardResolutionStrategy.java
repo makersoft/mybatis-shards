@@ -13,12 +13,12 @@ import java.util.List;
 import org.makersoft.shards.ShardId;
 
 /**
- * 
+ * 分区抉择策略
  */
 public interface ShardResolutionStrategy {
 
 	/**
-	 * Determine the shards on which an object might live
+	 * 决定此查询在哪些分区上执行
 	 *
 	 * @param shardResolutionStrategyData information we can use to select shards
 	 * @return the ids of the shards on which the object described by the ShardSelectionStrategyData might reside
