@@ -95,9 +95,9 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 		
 		MultiDataSourcesTransactionStatus transactionStatus = new MultiDataSourcesTransactionStatus();
 		
+		logger.debug("Operation '" + definition.getName() + "' starting transaction.");
+		
 		for (DataSource dataSource : dataSources) {
-			logger.info(dataSource + "正在开启事务...");
-			
 			DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition(definition);
 			defaultTransactionDefinition.setName(definition.getName());
 
@@ -108,8 +108,7 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 			
 			transactionStatus.put(dataSource, status);
 		}
-		
-		
+
 		return transactionStatus;
 
 	}
