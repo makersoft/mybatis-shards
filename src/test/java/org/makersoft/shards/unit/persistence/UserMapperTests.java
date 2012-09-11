@@ -26,10 +26,10 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Class description goes here.
+ * unit test for user mapper.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/org/makersoft/shards/unit/persistence/applicationContext.xml" })
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 @ActiveProfiles("test")
 public class UserMapperTests {

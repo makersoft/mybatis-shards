@@ -8,11 +8,13 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.ibatis.session.RowBounds;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.domain.User;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.access.impl.ParallelShardAccessStrategy;
-import org.makersoft.shards.strategy.merge.ShardMergeStrategy;
+import org.makersoft.shards.strategy.exit.impl.RowCountExitOperation;
+import org.makersoft.shards.strategy.reduce.ShardReduceStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategyData;
 import org.makersoft.shards.strategy.resolution.impl.AllShardsShardResolutionStrategy;
@@ -23,18 +25,13 @@ import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
  */
 public class UserShardStrategyFactory implements ShardStrategyFactory {
 
-	private ShardMergeStrategy shardMergeStrategy;
-	
-	public void setShardMergeStrategy(ShardMergeStrategy shardMergeStrategy) {
-		this.shardMergeStrategy = shardMergeStrategy;
-	}
-
 	@Override
 	public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
 		ShardSelectionStrategy pss = this.getShardSelectionStrategy(shardIds);
 		ShardResolutionStrategy prs = this.getShardResolutionStrategy(shardIds);
 		ShardAccessStrategy pas = this.getShardAccessStrategy();
-		return new ShardStrategyImpl(pss, prs, pas, shardMergeStrategy);
+		ShardReduceStrategy srs = this.getShardReduceStrategy();
+		return new ShardStrategyImpl(pss, prs, pas, srs);
 	}
 	
 	private ShardSelectionStrategy getShardSelectionStrategy(final List<ShardId> shardIds){
@@ -63,7 +60,7 @@ public class UserShardStrategyFactory implements ShardStrategyFactory {
 		};
 	}
 	
-	public ShardResolutionStrategy getShardResolutionStrategy(final List<ShardId> shardIds){
+	private ShardResolutionStrategy getShardResolutionStrategy(final List<ShardId> shardIds){
 //		return new AllShardsShardResolutionStrategy(shardIds);
 		return new AllShardsShardResolutionStrategy(shardIds) {
 			
@@ -75,7 +72,7 @@ public class UserShardStrategyFactory implements ShardStrategyFactory {
 //				Serializable id = shardResolutionStrategyData.getId();
 				
 				//自定义规则...
-				if("findByGender".equals(statement)){
+				if(statement.endsWith("findByGender")){
 					if(((Integer)parameter) == User.SEX_MALE){
 						return Collections.singletonList(new ShardId(1));
 					}else {
@@ -88,7 +85,7 @@ public class UserShardStrategyFactory implements ShardStrategyFactory {
 		};
 	}
 	
-	public ShardAccessStrategy getShardAccessStrategy() {
+	private ShardAccessStrategy getShardAccessStrategy() {
 		ThreadFactory factory = new ThreadFactory() {
 			public Thread newThread(Runnable r) {
 				Thread t = Executors.defaultThreadFactory().newThread(r);
@@ -103,6 +100,22 @@ public class UserShardStrategyFactory implements ShardStrategyFactory {
 		return new ParallelShardAccessStrategy(exec);
 		
 //		return new SequentialShardAccessStrategy();
+	}
+	
+	private ShardReduceStrategy getShardReduceStrategy() {
+		return new ShardReduceStrategy() {
+			
+			@Override
+			public List<Object> reduce(String statement, Object parameter, RowBounds rowBounds,
+					List<Object> values) {
+				if(statement.endsWith("getAllCount")){
+					
+					return new RowCountExitOperation().apply(values);
+				}
+				
+				return values;
+			}
+		};
 	}
 
 }
