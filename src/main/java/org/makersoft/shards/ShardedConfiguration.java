@@ -27,7 +27,7 @@ import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.Maps;
 
 /**
- * 
+ * @author Feng Kuok
  */
 public class ShardedConfiguration {
 
@@ -40,7 +40,7 @@ public class ShardedConfiguration {
 
 	// 用户自定义分区策略
 	private final ShardStrategyFactory shardStrategyFactory;
-	
+
 	private final IdGenerator idGenerator;
 
 	// 虚拟分区ids --> 物理分区 ids 映射
@@ -48,7 +48,6 @@ public class ShardedConfiguration {
 
 	// 物理分区ids --> 虚拟分区ids集合 映射
 	private final Map<Integer, Set<ShardId>> shardToVirtualShardIdMap;
-	
 
 	public ShardedConfiguration(List<ShardConfiguration> shardConfigs,
 			ShardStrategyFactory shardStrategyFactory, IdGenerator idGenerator) {
@@ -59,6 +58,7 @@ public class ShardedConfiguration {
 	public ShardedConfiguration(List<ShardConfiguration> shardConfigs,
 			ShardStrategyFactory shardStrategyFactory,
 			Map<Integer, Integer> virtualShardToShardMap, IdGenerator idGenerator) {
+
 		Assert.notNull(shardConfigs);
 		Assert.notNull(shardStrategyFactory);
 		Assert.notNull(virtualShardToShardMap);
@@ -71,10 +71,8 @@ public class ShardedConfiguration {
 		if (!virtualShardToShardMap.isEmpty()) {
 			// build the map from shard to set of virtual shards
 			shardToVirtualShardIdMap = Maps.newHashMap();
-			for (Map.Entry<Integer, Integer> entry : virtualShardToShardMap
-					.entrySet()) {
-				Set<ShardId> set = shardToVirtualShardIdMap.get(entry
-						.getValue());
+			for (Map.Entry<Integer, Integer> entry : virtualShardToShardMap.entrySet()) {
+				Set<ShardId> set = shardToVirtualShardIdMap.get(entry.getValue());
 				// see if we already have a set of virtual shards
 				if (set == null) {
 					// we don't, so create it and add it to the map
@@ -119,8 +117,8 @@ public class ShardedConfiguration {
 		// ShardedEnvironment.CHECK_ALL_ASSOCIATED_OBJECTS_FOR_DIFFERENT_SHARDS,
 		// prototypeConfiguration.getProperties(),
 		// true);
-		return new ShardedSqlSessionFactoryImpl(sqlSessionFactories,
-				shardStrategyFactory, idGenerator);
+		return new ShardedSqlSessionFactoryImpl(sqlSessionFactories, shardStrategyFactory,
+				idGenerator);
 	}
 
 }
