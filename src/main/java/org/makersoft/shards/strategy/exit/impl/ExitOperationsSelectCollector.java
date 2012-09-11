@@ -8,6 +8,7 @@
  */
 package org.makersoft.shards.strategy.exit.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
@@ -17,36 +18,45 @@ import org.makersoft.shards.strategy.exit.ExitOperationsCollector;
 import org.makersoft.shards.strategy.reduce.ShardReduceStrategy;
 
 /**
- * Class description goes here.
+ * .
  * 
  * @version 2012-9-7 下午1:38:06
  * @author Feng Kuok
  */
 public class ExitOperationsSelectCollector implements ExitOperationsCollector {
 	
-	private final SelectFactory selectFactory;
+	private final String statement;
+	private final Object parameter;
+	private final RowBounds rowBounds;
 	
 	private final ShardReduceStrategy shardReduceStrategy;
 	
-	private final RowBounds rowBounds;
-	
 	
 	public ExitOperationsSelectCollector(SelectFactory selectFactory, ShardReduceStrategy shardReduceStrategy){
-		this.selectFactory = selectFactory;
-		this.shardReduceStrategy = shardReduceStrategy;
+		this.statement = selectFactory.getStatement();
+		this.parameter = selectFactory.getParameter();
 		this.rowBounds = selectFactory.getRowBounds();
+		
+		this.shardReduceStrategy = shardReduceStrategy;
+		
 	}
 
 	@Override
-	public List<Object> apply(List<Object> result) {
+	public List<Object> apply(List<Object> values) {
 		
-		result = shardReduceStrategy.reduce(selectFactory.getStatement(), selectFactory.getParameter(), rowBounds, result);
-		
-		if (rowBounds != null && rowBounds != RowBounds.DEFAULT) {
-			result = new RowBoundsExitOperation(rowBounds).apply(result);
+		if(!values.isEmpty()){
+			//调用reduce策略
+			List<Object> results = shardReduceStrategy.reduce(statement, parameter, rowBounds, values);
+			
+			values = (results != null) ? results : Collections.emptyList();	//去除结果为null的情况
+			
+			if (rowBounds != null && rowBounds != RowBounds.DEFAULT) {
+				values = new RowBoundsExitOperation(rowBounds).apply(values);
+			}
+			
 		}
 		
-		return result;
+		return values;
 	}
 
 	@Override
