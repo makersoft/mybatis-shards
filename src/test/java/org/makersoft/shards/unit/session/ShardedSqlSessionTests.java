@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -30,6 +31,7 @@ import org.makersoft.shards.strategy.ShardStrategyImpl;
 import org.makersoft.shards.strategy.UserShardStrategyFactory;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.access.impl.SequentialShardAccessStrategy;
+import org.makersoft.shards.strategy.reduce.ShardReduceStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.resolution.impl.AllShardsShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
@@ -81,7 +83,17 @@ public class ShardedSqlSessionTests extends BaseTest{
 				  
 				  ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy(shardIds);
 				  ShardAccessStrategy pas = new SequentialShardAccessStrategy();
-				  return new ShardStrategyImpl(pss, prs, pas,null);
+				  
+				  ShardReduceStrategy srs = new ShardReduceStrategy() {
+					
+					@Override
+					public List<Object> reduce(String statement, Object parameter, RowBounds rowBounds,
+							List<Object> values) {
+						return values;
+					}
+				  };
+				  
+				  return new ShardStrategyImpl(pss, prs, pas, srs);
 			  }
 		  });
 	  }
