@@ -15,38 +15,12 @@
 		http://www.makersoft.org/schema/shards http://www.makersoft.org/schema/shards/maker-shards.xsd"
 	default-lazy-init="false" default-autowire="byName">
 
-	<description>Spring公共配置 </description>
+	<description>Spring公共配置</description>
 
 	<context:component-scan base-package="org.makersoft.shards">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	
-	<!-- mybatis 配置
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource_1" />
-        <property name="mapperLocations" value="classpath*:/org/makersoft/shards/mapper/*Mapper.xml"/>
-        <property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
-    </bean>-->
-    
-    
-  	
-  	<bean id="shardMergeStrategy" class="org.makersoft.shards.strategy.merge.impl.DBShardMergeStrategy">
-  		<property name="sqlSession" >
-  			<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
-		    	<constructor-arg >
-		    		<bean class="org.mybatis.spring.SqlSessionFactoryBean">
-		    		 	<property name="dataSource" ref="lazyConnectionDataSource_h2" />
-		        		<property name="mapperLocations" value="classpath*:/mybatis/merger/*Merger.xml"/>
-		    		</bean>
-		    	</constructor-arg>
-		  	</bean>
-  		</property>
-  		<property name="createTablePrefix" value=".create"/>
-  		<property name="insertPrefix" value=".insert"/>
-  		<property name="selectPrefix" value=".select"/>
-  		<property name="dropTablePrefix" value=".drop"/>
-  	</bean>
-    
     <!-- Construct Map -->
 	<bean id="dsMap" class="java.util.HashMap">
 		<constructor-arg>
@@ -58,83 +32,52 @@
 	  	</constructor-arg>
 	 </bean>
 	 
+	 <!-- mybatis 配置-->
     <bean id="shardedSqlSessionFactory" class="org.makersoft.shards.spring.ShardedSqlSessionFactoryBean">
      	<property name="mapperLocations" value="classpath*:/mybatis/mapper/*Mapper.xml"/>
         <property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
     	<property name="dataSources" ref="dsMap"/>
         <property name="shardStrategyFactory">
-        	<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory">
-        		<property name="shardMergeStrategy" ref="shardMergeStrategy"/>
-        	</bean>
+        	<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory"/>
         </property>
         <property name="idGenerator">
-        	<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"></bean>
+        	<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"/>
         </property>
     </bean>
      
-    <!-- scan for mappers and let them be autowired
+    <!-- scan for mappers and let them be autowired -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="org.makersoft.shards.mapper" />
-    </bean> -->
-    
-	<!-- 事务配置 -->
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource_1" />
+        <property name="sqlSessionFactoryBeanName" value="shardedSqlSessionFactory" />
+        <property name="annotationClass" value="org.makersoft.shards.annotation.MyBatisMapper"/>
     </bean>
-    <!-- -->
-    <bean id="multiDataSourcesTransactionManager" class="org.makersoft.shards.transaction.MultiDataSourcesTransactionManager">
+    
+    <!-- 事务配置 -->
+    <bean id="transactionManager" class="org.makersoft.shards.transaction.MultiDataSourcesTransactionManager">
     	<property name="dataSources">
-    		<!--  -->
 			<list>
 				 <ref local="lazyConnectionDataSource_1"/>
 				 <ref local="lazyConnectionDataSource_2"/>
 				 <ref local="lazyConnectionDataSource_3"/>
 				 <ref local="lazyConnectionDataSource_h2"/>
 	     	</list>
-	     	
     	</property>
     </bean>
     
-    <bean id="jdbcTemplate_1" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="lazyConnectionDataSource_1"/>
-    </bean>
-    
-    <bean id="jdbcTemplate_2" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="lazyConnectionDataSource_2"/>
-    </bean>
-    
-    <bean id="jdbcTemplate_3" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="lazyConnectionDataSource_3"/>
-    </bean>
-	 
 	<!-- 使用annotation定义事务
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 	 -->
 	<beans profile="test">
 		<!-- 定义受环境影响易变的变量 -->
-		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-			<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
-			<property name="ignoreResourceNotFound" value="true" />
-			<property name="locations">
-				<list>
-					<value>classpath*:/application.properties</value>
-				</list>
-			</property>
-		</bean>
+		<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
-		<!-- 数据源配置,使用应用内的DBCP数据库连接池 -->
+		<!-- 数据源配置,使用应用DBCP数据库连接池 -->
 		<bean id="dataSource_1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
-			<!-- Connection Info -->
 			<property name="driverClassName" value="${mysql.jdbc.driver}"/>
         	<property name="url" value="${ds1.jdbc.url}"/>
         	<property name="username" value="${ds1.jdbc.username}"/>
         	<property name="password" value="${ds1.jdbc.password}"/>
-	        <property name="maxIdle" value="5" />
-			<property name="maxActive" value="1000" />
 			<property name="defaultAutoCommit" value="false" />
-			<property name="timeBetweenEvictionRunsMillis" value="3600000" />
-			<property name="minEvictableIdleTimeMillis" value="3600000" />
-			<property name="maxWait" value="1800" />
 		</bean>
 		
 		<bean id="dataSource_2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -142,12 +85,7 @@
         	<property name="url" value="${ds2.jdbc.url}"/>
         	<property name="username" value="${ds2.jdbc.username}"/>
         	<property name="password" value="${ds2.jdbc.password}"/>
-	        <property name="maxIdle" value="5" />
-			<property name="maxActive" value="1000" />
 			<property name="defaultAutoCommit" value="false" />
-			<property name="timeBetweenEvictionRunsMillis" value="3600000" />
-			<property name="minEvictableIdleTimeMillis" value="3600000" />
-			<property name="maxWait" value="1800" />
 		</bean>
 		
 		<bean id="dataSource_3" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
@@ -155,12 +93,7 @@
         	<property name="url" value="${ds3.jdbc.url}"/>
         	<property name="username" value="${ds3.jdbc.username}"/>
         	<property name="password" value="${ds3.jdbc.password}"/>
-	        <property name="maxIdle" value="5" />
-			<property name="maxActive" value="1000" />
 			<property name="defaultAutoCommit" value="false" />
-			<property name="timeBetweenEvictionRunsMillis" value="3600000" />
-			<property name="minEvictableIdleTimeMillis" value="3600000" />
-			<property name="maxWait" value="1800" />
 		</bean>
 		
 		<bean id="dataSource_h2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -186,17 +119,5 @@
 		<bean id="lazyConnectionDataSource_h2" name="name_h2" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">  
 			<property name="targetDataSource" ref="dataSource_h2"/>  
 		</bean> 
-		<!-- 
-		<makersoft:datasources>
-			<property name="" value=""/>
-			
-			<datasource id="" name="" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-				<property name="driverClassName" value="${mysql.jdbc.driver}"/>
-	        	<property name="url" value="${ds3.jdbc.url}"/>
-	        	<property name="username" value="${ds3.jdbc.username}"/>
-	        	<property name="password" value="${ds3.jdbc.password}"/>
-			</datasource>
-		</makersoft:datasources>
-		 -->
 	</beans>
 </beans>
