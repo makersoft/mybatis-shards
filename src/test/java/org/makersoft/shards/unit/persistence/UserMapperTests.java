@@ -1,10 +1,13 @@
+/*
+ * @(#)UserMapperTests.java 2012-9-4 下午3:59:06
+ *
+ * Copyright (c) 2011-2012 Makersoft.org all rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *
+ */
 package org.makersoft.shards.unit.persistence;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -13,7 +16,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.makersoft.shards.domain.User;
-import org.makersoft.shards.mapper.UserDao;
+import org.makersoft.shards.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,40 +25,43 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Class description goes here.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
-@TransactionConfiguration(transactionManager = "multiDataSourcesTransactionManager", defaultRollback = false)
+@ContextConfiguration(locations = { "classpath:/org/makersoft/shards/unit/persistence/applicationContext.xml" })
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 @ActiveProfiles("test")
-public class UserDaoTests {
+public class UserMapperTests {
 
-	@Autowired(required=true)
-	private UserDao userDao;
-	
+	@Autowired(required = true)
+	private UserMapper userMapper;
+
 	private static String firstId;
-	
+
 	public static int rowsCount = 10000;
-	
+
 	private Random random = new Random();
-	
+
 	@Test
 	@Transactional
-	public void testInsert() throws Exception{
-		
-		for(int i = 0; i < rowsCount; i++){
+	public void testInsert() throws Exception {
+
+		for (int i = 0; i < rowsCount; i++) {
 			User user = new User();
 			user.setUsername("makersoft" + i);
 			user.setPassword("makersoft" + i);
 			user.setAge(random.nextInt(30));
-			
-			if(i % 2 == 0){
+
+			if (i % 2 == 0) {
 				user.setGender(User.SEX_MALE);
-			}else{
+			} else {
 				user.setGender(User.SEX_FEMALE);
 			}
-			
-			userDao.insertUser(user);
-			
-			if(i == 0){
+
+			userMapper.insertUser(user);
+
+			if (i == 0) {
 				firstId = user.getId();
 				System.out.println(firstId);
 			}
@@ -67,7 +73,7 @@ public class UserDaoTests {
 	public void testUpdate() throws Exception{
 		User user = new User();
 		user.setPassword("www.makersoft.org");
-		int rows = userDao.udpateUser(user);
+		int rows = userMapper.udpateUser(user);
 		Assert.assertEquals(rowsCount, rows);
 	}
 	
@@ -81,35 +87,39 @@ public class UserDaoTests {
 		user.setUsername("username");
 		user.setPassword("password");
 		
-		int rows = userDao.updateById(user);
+		int rows = userMapper.updateById(user);
 		Assert.assertEquals(1, rows);
 	}
 	
 	@Test
 	@Transactional(readOnly = true)
 	public void testGetAllCount() throws Exception{
-		int count = userDao.getAllCount();
+		int count = userMapper.getAllCount();
+		Assert.assertEquals(rowsCount, count);
+		long start = System.currentTimeMillis();
+		count = userMapper.getAllCount();
+		System.out.println("耗时：" +(System.currentTimeMillis() - start));
 		Assert.assertEquals(rowsCount, count);
 	}
 	
 	@Test
 	@Transactional(readOnly = true)
 	public void testFindAll() throws Exception{
-		List<User> users = userDao.findAll();
+		List<User> users = userMapper.findAll();
 		Assert.assertEquals(rowsCount, users.size());
 	}
 	
 	@Test
 	@Transactional(readOnly = true)
 	public void testFindByGender() throws Exception{
-		List<User> users = userDao.findByGender(User.SEX_MALE);
+		List<User> users = userMapper.findByGender(User.SEX_MALE);
 		Assert.assertEquals(rowsCount / 2, users.size());
 	}
 	
 	@Test
 	@Transactional(readOnly = true)
 	public void testGetById() throws Exception{
-		User user = userDao.getById(firstId);
+		User user = userMapper.getById(firstId);
 		Assert.assertNotNull(user);
 	}
 	
@@ -118,7 +128,7 @@ public class UserDaoTests {
 	@Transactional
 	public void testDeleteById() throws Exception{
 		
-		int rows = userDao.deleteById(firstId);
+		int rows = userMapper.deleteById(firstId);
 		Assert.assertEquals(1, rows);
 	}
 	
@@ -126,35 +136,8 @@ public class UserDaoTests {
 	@Transactional
 	public void testDelete() throws Exception{
 		
-		int rows = userDao.deleteAll();
+		int rows = userMapper.deleteAll();
 		Assert.assertEquals(rowsCount, rows);
 	}
-	
-	@Test
-	public void testForeach() throws Exception {
 
-		String sqlCreate = "create cached local temporary table if not exists test(id int)";
-		String sqlQuery = "select sum(id) from test";
-		Class.forName("org.h2.Driver");
-		Connection conn = DriverManager.getConnection("jdbc:h2:file:~/.h2/mybatis-shards;AUTO_SERVER=TRUE;PAGE_SIZE=1024", "sa", "");
-		Statement stmt = conn.createStatement();
-//		conn.setAutoCommit(false);
-		try {
-			int effectiveCount = stmt.executeUpdate(sqlCreate);
-			for (int i = 0; i < 1000000; i++) {
-				stmt.executeUpdate("insert into test (id) values(" + i + ")");
-//				ResultSet rest = stmt.executeQuery(sqlQuery);
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
-			if(stmt!= null){
-				stmt.close();
-			}
-			if(conn != null){
-				conn.close();
-			}
-		}
-	}
 }
