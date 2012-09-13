@@ -6,7 +6,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  *
  */
-package org.makersoft.shards.plugin.spi.impl;
+package org.makersoft.shards.plugin.spi.internal;
 
 import org.makersoft.shards.plugin.spi.Dialect;
 
