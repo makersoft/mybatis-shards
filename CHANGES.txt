@@ -1,0 +1,24 @@
+MyBatis-Shards Change Log
+
+Release 1.0.0.Alpha2 - 2012.09.28
+
+  NEW FEATURES
+	
+	1. 实现纵向切分
+	
+	2. 实现同时兼容横向和纵向切分
+	
+  IMPROVEMENTS
+
+    1. 改善代码质量
+    
+    2. 完善单元测试
+
+  BUG FIXES
+
+	1. No
+
+Release 1.0.0.Alpha1 - 2012.09.13
+
+	1. The first release of MyBatis-Shards.
+
