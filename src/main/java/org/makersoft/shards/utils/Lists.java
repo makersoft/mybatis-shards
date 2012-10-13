@@ -69,4 +69,54 @@ public class Lists {
 	public static <E> LinkedList<E> newLinkedList() {
 		return new LinkedList<E>();
 	}
+	
+	/**
+	 * 交集
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> List<E> intersection(List<E> a, List<E> b){
+		List<E> dest = newArrayList(a);     
+        dest.retainAll(b); 
+        
+        return dest;   
+	}
+	
+	/**
+	 * 并集
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> List<E> union(List<E> a, List<E> b){
+		List<E> dest = newArrayList(a);     
+        
+        for(E e : b){
+        	if(!dest.contains(e)){
+        		dest.add(e);
+        	}
+        }
+        
+        return dest;   
+	}
+	
+	/**
+	 * 差集
+	 */
+	public static <E> List<E> subtraction(List<E> a, List<E> b){
+		List<E> dest = union(a, b);     
+		dest.removeAll(intersection(a,b));
+        
+        return dest;
+	}
+	
+	/**
+	 * 补集
+	 * @return
+	 */
+	public static <E> List<E> complement(List<E> a, List<E> b){
+		List<E> dest = union(a, b);    
+		dest.removeAll(b);
+		
+		return dest;
+	}
 }
