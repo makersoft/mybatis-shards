@@ -21,6 +21,15 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		
+		<repository>
+			<id>spy</id>
+			<name>Spy Repository</name>
+			<url>http://files.couchbase.com/maven2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+	    </repository>
 	</repositories>
 
 	<dependencies>
@@ -102,12 +111,12 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.6.12</version>
+			<version>1.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.6.12</version>
+			<version>1.7.1</version>
 		</dependency>
 
 		<dependency>
@@ -237,6 +246,12 @@
 						<version>2.12.4</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
 			</plugin>
 		</plugins>
 	</build>
