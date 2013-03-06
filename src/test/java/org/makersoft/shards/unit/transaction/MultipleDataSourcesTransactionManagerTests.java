@@ -35,9 +35,9 @@ public class MultipleDataSourcesTransactionManagerTests {
 	@Rollback
 	public void testTransactionCommitAndRollback() throws Exception{
 
-		int affectedrows = jdbcTemplate_1.update("insert into maker_shards_user (id,username,password,gender) values (1,'makersoft','makersoft',1)");
+		int affectedrows = jdbcTemplate_1.update("insert into maker_shards_user (id,username,password,age,gender) values (1,'makersoft','makersoft',23,1)");
 		Assert.assertEquals(affectedrows, 1);
-		affectedrows = jdbcTemplate_2.update("insert into maker_shards_user (id,username,password,gender) values (1,'makersoft','makersoft',0)");
+		affectedrows = jdbcTemplate_2.update("insert into maker_shards_user (id,username,password,age,gender) values (1,'makersoft','makersoft',22,0)");
 		Assert.assertEquals(affectedrows, 1);
 
 	}
