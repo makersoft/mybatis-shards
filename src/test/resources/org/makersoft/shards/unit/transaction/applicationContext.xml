@@ -46,55 +46,36 @@
 	 
 	<beans profile="test">
 		<!-- 定义受环境影响易变的变量 -->
-		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-			<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
-			<property name="ignoreResourceNotFound" value="true" />
-			<property name="locations">
-				<list>
-					<value>classpath*:/application.properties</value>
-				</list>
-			</property>
-		</bean>
+		<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
-		<!-- 数据源配置,使用应用内的DBCP数据库连接池 -->
-		<bean id="dataSource_1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
-			<!-- Connection Info -->
-			<property name="driverClassName" value="${mysql.jdbc.driver}"/>
-        	<property name="url" value="${ds1.jdbc.url}"/>
-        	<property name="username" value="${ds1.jdbc.username}"/>
-        	<property name="password" value="${ds1.jdbc.password}"/>
-	        <property name="maxIdle" value="5" />
-			<property name="maxActive" value="1000" />
-			<property name="defaultAutoCommit" value="false" />
-			<property name="timeBetweenEvictionRunsMillis" value="3600000" />
-			<property name="minEvictableIdleTimeMillis" value="3600000" />
-			<property name="maxWait" value="1800" />
+
+		<!-- Simple连接池 -->
+		<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="url" value="${ds1.jdbc.url}" />
+			<property name="username" value="${ds1.jdbc.username}" />
+			<property name="password" value="${ds1.jdbc.password}" />	
 		</bean>
 		
-		<bean id="dataSource_2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-			<property name="driverClassName" value="${mysql.jdbc.driver}"/>
-        	<property name="url" value="${ds2.jdbc.url}"/>
-        	<property name="username" value="${ds2.jdbc.username}"/>
-        	<property name="password" value="${ds2.jdbc.password}"/>
-	        <property name="maxIdle" value="5" />
-			<property name="maxActive" value="1000" />
-			<property name="defaultAutoCommit" value="false" />
-			<property name="timeBetweenEvictionRunsMillis" value="3600000" />
-			<property name="minEvictableIdleTimeMillis" value="3600000" />
-			<property name="maxWait" value="1800" />
+		<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="url" value="${ds2.jdbc.url}" />
+			<property name="username" value="${ds2.jdbc.username}" />
+			<property name="password" value="${ds2.jdbc.password}" />	
 		</bean>
 		
-		<bean id="dataSource_3" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
-			<property name="driverClassName" value="${mysql.jdbc.driver}"/>
-        	<property name="url" value="${ds3.jdbc.url}"/>
-        	<property name="username" value="${ds3.jdbc.username}"/>
-        	<property name="password" value="${ds3.jdbc.password}"/>
-	        <property name="maxIdle" value="5" />
-			<property name="maxActive" value="1000" />
-			<property name="defaultAutoCommit" value="false" />
-			<property name="timeBetweenEvictionRunsMillis" value="3600000" />
-			<property name="minEvictableIdleTimeMillis" value="3600000" />
-			<property name="maxWait" value="1800" />
+		<bean id="dataSource_3" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="url" value="${ds3.jdbc.url}" />
+			<property name="username" value="${ds3.jdbc.username}" />
+			<property name="password" value="${ds3.jdbc.password}" />	
+		</bean>
+		
+		<bean id="dataSource_h2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${h2.jdbc.driver}" />
+			<property name="url" value="${h2.jdbc.url}" />
+			<property name="username" value="${h2.jdbc.username}" />
+			<property name="password" value="${h2.jdbc.password}" />	
 		</bean>
 		
 		<bean id="lazyConnectionDataSource_1" name="name_1" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"> 
