@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"  xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:shards="http://www.makersoft.org/schema/shards"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://www.makersoft.org/schema/shards http://www.makersoft.org/schema/shards/maker-shards.xsd"
+	default-lazy-init="false" default-autowire="byName">
+
+	<description>Shards相关配置</description>
+	
+	<bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
+		<property name="shardId" value="0"/>
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/*Mapper.xml"/>
+        <property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
+    	<property name="dataSources" ref="dsMap"/>
+        <property name="shardStrategyFactory">
+        	<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory"/>
+        </property>
+        <property name="idGenerator">
+        	<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"/>
+        </property>
+	</bean>
+</beans>
