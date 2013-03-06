@@ -4,7 +4,7 @@
 
 <mapper namespace="org.makersoft.shards.mapper.UserMapper">
 
-	<insert id="insertUser" parameterType="User">
+	<insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
 		INSERT INTO ${prefix}maker_shards_user${suffix} 
 			(id, username, password, age, gender) 
 		VALUES

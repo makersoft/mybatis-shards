@@ -102,8 +102,8 @@ public class ShardedSqlSessionTests extends BaseTest{
 	  public void testSelectAllUsers() throws Exception {
 		  SqlSession session = factory.openSession();
 		  try {
-			  List<User> users = session.selectList("findAllUsers");
-			  Assert.assertEquals(5000, users.size());
+			  List<User> users = session.selectList("findAll");
+			  Assert.assertEquals(0, users.size());
 		  } finally {
 			  session.close();
 		  }
