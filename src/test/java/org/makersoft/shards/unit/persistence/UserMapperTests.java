@@ -11,8 +11,7 @@ package org.makersoft.shards.unit.persistence;
 import java.util.List;
 import java.util.Random;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.makersoft.shards.domain.User;
@@ -39,7 +38,7 @@ public class UserMapperTests {
 
 	private static String firstId;
 
-	public static int rowsCount = 10000;
+	public static int rowsCount = 1000;
 
 	private Random random = new Random();
 
