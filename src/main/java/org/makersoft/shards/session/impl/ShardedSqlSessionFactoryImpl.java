@@ -174,10 +174,23 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 
 	@Override
 	public Configuration getConfiguration() {
-		//TODO : 此处应该合并两个Mapper并返回（垂直切分时考虑）
+		//TODO(fengkuok) : 此处应该合并两个Mapper并返回（垂直切分时考虑）
 		return getAnyFactory().getConfiguration();
+		
 //		return new Configuration(){
 //			
+//			@Override
+//			public Collection<String> getMappedStatementNames() {
+//				// TODO Auto-generated method stub
+//				return super.getMappedStatementNames();
+//			}
+//
+//			@Override
+//			public MappedStatement getMappedStatement(String id) {
+//				// TODO Auto-generated method stub
+//				return super.getMappedStatement(id);
+//			}
+//
 //			@Override
 //			public boolean hasMapper(Class<?> type) {
 //				for(SqlSessionFactory factory : getSqlSessionFactories()){
@@ -188,6 +201,11 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 //				
 //				return false;
 //			}
+//			
+//		  public boolean hasStatement(String statementName) {
+//			    return hasStatement(statementName, true);
+//			  }
+//		
 //		};
 	}
 	
