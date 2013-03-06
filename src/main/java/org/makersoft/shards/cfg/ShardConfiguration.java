@@ -22,7 +22,7 @@ import org.makersoft.shards.ShardId;
  * @author Feng Kuok
  */
 public interface ShardConfiguration {
-	
+
 	/**
 	 * @return 此物理分区的唯一ID
 	 */
@@ -43,4 +43,27 @@ public interface ShardConfiguration {
 	 * @return 此物理分区的{@link SqlSessionFactory}
 	 */
 	SqlSessionFactory getSqlSessionFactory();
+
+//	void setConfigLocation(Resource configLocation);
+//
+//	/**
+//	 * @return locations of MyBatis mapper files
+//	 */
+//	Resource[] getMapperLocations();
+//
+//	void getConfigurationProperties(Properties configurationProperties);
+//
+//	void getPlugins(Interceptor[] plugins);
+//
+//	void getTypeHandlers(TypeHandler<?>[] typeHandlers);
+//
+//	void getTypeHandlersPackage(String typeHandlersPackage);
+//
+//	void getTypeAliases(Class<?>[] typeAliases);
+//
+//	void getTypeAliasesPackage(String typeAliasesPackage);
+//
+//	void getShardStrategyFactory(ShardStrategyFactory shardStrategyFactory);
+//
+//	void getIdGenerator(IdGenerator idGenerator);
 }

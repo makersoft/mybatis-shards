@@ -9,13 +9,19 @@
 package org.makersoft.shards.cfg.impl;
 
 import java.util.List;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.TypeHandler;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.cfg.ShardConfiguration;
+import org.makersoft.shards.id.IdGenerator;
+import org.makersoft.shards.strategy.ShardStrategyFactory;
 import org.makersoft.shards.utils.Lists;
+import org.springframework.core.io.Resource;
 
 /**
  * @version 2012-8-1 下午10:00:00
@@ -29,7 +35,31 @@ public class ShardConfigurationImpl implements ShardConfiguration{
 	
 	private final DataSource dataSource;
 	
-	private final SqlSessionFactory sqlSessionFactory;
+	private SqlSessionFactory sqlSessionFactory;
+	
+	//
+	private Resource configLocation;
+
+	private Resource[] mapperLocations;
+
+	private Properties configurationProperties;
+
+	private boolean failFast;
+	
+	private Interceptor[] plugins;
+
+	private TypeHandler<?>[] typeHandlers;
+
+	private String typeHandlersPackage;
+
+	private Class<?>[] typeAliases;
+
+	private String typeAliasesPackage;
+	
+	//---
+	private ShardStrategyFactory shardStrategyFactory;
+	
+	private IdGenerator idGenerator; 
 	
 	/**
 	 * 物理分区和逻辑分区一对一
@@ -66,6 +96,95 @@ public class ShardConfigurationImpl implements ShardConfiguration{
 	@Override
 	public SqlSessionFactory getSqlSessionFactory() {
 		return sqlSessionFactory;
+	}
+
+	//--------------------------------
+	public Resource getConfigLocation() {
+		return configLocation;
+	}
+
+	public void setConfigLocation(Resource configLocation) {
+		this.configLocation = configLocation;
+	}
+
+	public Resource[] getMapperLocations() {
+		return mapperLocations;
+	}
+
+	public void setMapperLocations(Resource[] mapperLocations) {
+		this.mapperLocations = mapperLocations;
+	}
+
+	public Properties getConfigurationProperties() {
+		return configurationProperties;
+	}
+
+	public void setConfigurationProperties(Properties configurationProperties) {
+		this.configurationProperties = configurationProperties;
+	}
+
+	public boolean isFailFast() {
+		return failFast;
+	}
+
+	public void setFailFast(boolean failFast) {
+		this.failFast = failFast;
+	}
+
+	public Interceptor[] getPlugins() {
+		return plugins;
+	}
+
+	public void setPlugins(Interceptor[] plugins) {
+		this.plugins = plugins;
+	}
+
+	public TypeHandler<?>[] getTypeHandlers() {
+		return typeHandlers;
+	}
+
+	public void setTypeHandlers(TypeHandler<?>[] typeHandlers) {
+		this.typeHandlers = typeHandlers;
+	}
+
+	public String getTypeHandlersPackage() {
+		return typeHandlersPackage;
+	}
+
+	public void setTypeHandlersPackage(String typeHandlersPackage) {
+		this.typeHandlersPackage = typeHandlersPackage;
+	}
+
+	public Class<?>[] getTypeAliases() {
+		return typeAliases;
+	}
+
+	public void setTypeAliases(Class<?>[] typeAliases) {
+		this.typeAliases = typeAliases;
+	}
+
+	public String getTypeAliasesPackage() {
+		return typeAliasesPackage;
+	}
+
+	public void setTypeAliasesPackage(String typeAliasesPackage) {
+		this.typeAliasesPackage = typeAliasesPackage;
+	}
+
+	public ShardStrategyFactory getShardStrategyFactory() {
+		return shardStrategyFactory;
+	}
+
+	public void setShardStrategyFactory(ShardStrategyFactory shardStrategyFactory) {
+		this.shardStrategyFactory = shardStrategyFactory;
+	}
+
+	public IdGenerator getIdGenerator() {
+		return idGenerator;
+	}
+
+	public void setIdGenerator(IdGenerator idGenerator) {
+		this.idGenerator = idGenerator;
 	}
 
 }
