@@ -1,3 +1,11 @@
+/*
+ * @(#)UserShardStrategyFactory.java 2012-9-12 下午12:57:18
+ *
+ * Copyright (c) 2011-2012 Makersoft.org all rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *
+ */
 package org.makersoft.shards.strategy;
 
 import java.util.Collections;
