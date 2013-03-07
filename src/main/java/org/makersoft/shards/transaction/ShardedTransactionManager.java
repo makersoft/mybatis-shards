@@ -9,7 +9,7 @@
 package org.makersoft.shards.transaction;
 
 /**
- * 
+ * TODO(fengkuok)： 不兼容普通JDBC数据源配置的，MyBatis-Shards专用的事务管理类
  */
 public class ShardedTransactionManager {
 
