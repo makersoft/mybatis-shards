@@ -29,11 +29,11 @@ import org.springframework.core.io.Resource;
  */
 public class ShardConfigurationImpl implements ShardConfiguration{
 	
-	private final Integer shardId;
+	private Integer shardId;
 	
-	private final List<ShardId> shardIds;
+	private List<ShardId> shardIds;
 	
-	private final DataSource dataSource;
+	private DataSource dataSource;
 	
 	private SqlSessionFactory sqlSessionFactory;
 	
@@ -60,6 +60,10 @@ public class ShardConfigurationImpl implements ShardConfiguration{
 	private ShardStrategyFactory shardStrategyFactory;
 	
 	private IdGenerator idGenerator; 
+	
+	//constructor
+	public ShardConfigurationImpl(){
+	}
 	
 	/**
 	 * 物理分区和逻辑分区一对一
@@ -185,6 +189,19 @@ public class ShardConfigurationImpl implements ShardConfiguration{
 
 	public void setIdGenerator(IdGenerator idGenerator) {
 		this.idGenerator = idGenerator;
+	}
+	
+	//用于单独配置每个Shard Configuration
+	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
+	
+	public void setShardId(Integer shardId) {
+		this.shardId = shardId;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 }
