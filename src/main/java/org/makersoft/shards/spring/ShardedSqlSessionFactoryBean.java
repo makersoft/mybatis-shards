@@ -29,6 +29,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 
@@ -64,31 +65,60 @@ public class ShardedSqlSessionFactoryBean implements
 	
 	private IdGenerator idGenerator; 
 	
+	//直接配置ShardConfiguration
+	private List<ShardConfigurationImpl> shardConfigurations;
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(dataSources, "data sources can not be null.");
+//		Assert.notNull(dataSources, "data sources can not be null.");
 		
 		List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
-
-		for(Map.Entry<Integer, DataSource> entry : dataSources.entrySet()){
-			int shardId = entry.getKey();	//虚拟分区ID
-			DataSource dataSource = entry.getValue();	//虚拟分区所属数据源
+		
+		if(CollectionUtils.isEmpty(shardConfigurations)){
+			for(Map.Entry<Integer, DataSource> entry : dataSources.entrySet()){
+				int shardId = entry.getKey();	//虚拟分区ID
+				DataSource dataSource = entry.getValue();	//虚拟分区所属数据源
+				
+				SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+				factoryBean.setConfigLocation(this.configLocation);
+				factoryBean.setMapperLocations(this.mapperLocations);
+				factoryBean.setDataSource(dataSource);
+				factoryBean.setEnvironment(this.environment);
+				factoryBean.setConfigurationProperties(this.configurationProperties);
+				factoryBean.setPlugins(this.plugins);
+				factoryBean.setTypeHandlers(this.typeHandlers);
+				factoryBean.setTypeHandlersPackage(this.typeHandlersPackage);
+				factoryBean.setTypeAliases(this.typeAliases);
+				factoryBean.setTypeAliasesPackage(this.typeAliasesPackage);
+				
+				SqlSessionFactory sessionFacotry = factoryBean.getObject();
+				
+				shardConfigs.add(new ShardConfigurationImpl(shardId, dataSource, sessionFacotry));
+			}
+		}else {
+			for(ShardConfigurationImpl shardConfiguration : shardConfigurations){
+				
+				Assert.notNull(shardConfiguration.getShardId(), "shard id can not be null.");
+				Assert.notNull(shardConfiguration.getShardDataSource(), "data source can not be null.");
+				
+				SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+				factoryBean.setConfigLocation(shardConfiguration.getConfigLocation());
+				factoryBean.setMapperLocations(shardConfiguration.getMapperLocations());
+				factoryBean.setDataSource(shardConfiguration.getShardDataSource());
+				factoryBean.setEnvironment(this.environment);
+				factoryBean.setConfigurationProperties(this.configurationProperties);
+				factoryBean.setPlugins(this.plugins);
+				factoryBean.setTypeHandlers(this.typeHandlers);
+				factoryBean.setTypeHandlersPackage(shardConfiguration.getTypeHandlersPackage());
+				factoryBean.setTypeAliases(this.typeAliases);
+				factoryBean.setTypeAliasesPackage(shardConfiguration.getTypeAliasesPackage());
+				
+				SqlSessionFactory sessionFacotry = factoryBean.getObject();
+				shardConfiguration.setSqlSessionFactory(sessionFacotry);
+				
+				shardConfigs.add(shardConfiguration);
+			}
 			
-			SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
-			factoryBean.setConfigLocation(this.configLocation);
-			factoryBean.setMapperLocations(this.mapperLocations);
-			factoryBean.setDataSource(dataSource);
-			factoryBean.setEnvironment(this.environment);
-			factoryBean.setConfigurationProperties(this.configurationProperties);
-			factoryBean.setPlugins(this.plugins);
-			factoryBean.setTypeHandlers(this.typeHandlers);
-			factoryBean.setTypeHandlersPackage(this.typeHandlersPackage);
-			factoryBean.setTypeAliases(this.typeAliases);
-			factoryBean.setTypeAliasesPackage(this.typeAliasesPackage);
-			
-			SqlSessionFactory sessionFacotry = factoryBean.getObject();
-			
-			shardConfigs.add(new ShardConfigurationImpl(shardId, dataSource, sessionFacotry));
 		}
 		
 		ShardedConfiguration configuration = new ShardedConfiguration(shardConfigs, this.shardStrategyFactory, idGenerator);
@@ -163,6 +193,10 @@ public class ShardedSqlSessionFactoryBean implements
 
 	public void setIdGenerator(IdGenerator idGenerator) {
 		this.idGenerator = idGenerator;
+	}
+
+	public void setShardConfigurations(List<ShardConfigurationImpl> shardConfigurations) {
+		this.shardConfigurations = shardConfigurations;
 	}
 
 }
