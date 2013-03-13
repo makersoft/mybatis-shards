@@ -5,11 +5,11 @@
 <mapper namespace="org.makersoft.shards.mapper.RoleMapper">
 
   <select id="getById" parameterType="long" resultType="org.makersoft.shards.domain.Role">
-    SELECT * FROM maker_test_role WHERE id = #{id}
+    SELECT * FROM maker_shards_role WHERE id = #{id}
   </select>
 
   <select id="findAll" resultType="org.makersoft.shards.domain.Role">
-    SELECT * FROM maker_test_role
+    SELECT * FROM maker_shards_role
   </select>
 
   <update id="update" parameterType="org.makersoft.shards.domain.Role">
@@ -28,8 +28,8 @@
     WHERE USERID = #{username}
   </update>
 
-  <insert id="insertRole" parameterType="org.makersoft.shards.domain.Role">
-  	INSERT INTO maker_test_role (id,username,password) VALUES (#{id}, #{username},#{password})
+  <insert id="insert" parameterType="org.makersoft.shards.domain.Role">
+  	INSERT INTO maker_shards_role (id,name,code) VALUES (#{id}, #{name},#{code})
   </insert>
 
 </mapper>
