@@ -22,6 +22,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.TransactionIsolationLevel;
 import org.makersoft.shards.ShardId;
+import org.makersoft.shards.cfg.MyBatisConfigurationsWrapper;
 import org.makersoft.shards.id.IdGenerator;
 import org.makersoft.shards.session.ShardedSqlSession;
 import org.makersoft.shards.session.ShardedSqlSessionFactory;
@@ -60,6 +61,10 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 	// Reference to the SessionFactory we use for functionality that expects
 	// data to live in a single, well-known location (like distributed sequences)
 	private final SqlSessionFactory controlSqlSessionFactory;
+	
+	private final ShardedSqlSession singleShardedSqlSession;
+	
+	private final Configuration configurationsWrapper;
 
 	public ShardedSqlSessionFactoryImpl(
 			Map<SqlSessionFactory, Set<ShardId>> sessionFactoryShardIdMap,
@@ -104,6 +109,10 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 		
 		this.idGenerator = idGenerator;
 		
+		this.singleShardedSqlSession = new ShardedSqlSessionImpl(this, shardStrategy);
+		
+		this.configurationsWrapper = new MyBatisConfigurationsWrapper(getAnyFactory().getConfiguration(), this.getSqlSessionFactories());
+		
 	}
 
 	private SqlSessionFactory getAnyFactory() {
@@ -145,7 +154,7 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 	
 	@Override
 	public ShardedSqlSession openSession(ExecutorType execType, boolean autoCommit) {
-		return new ShardedSqlSessionImpl(this, shardStrategy);
+		return singleShardedSqlSession;
 	}
 	
 	@Override
@@ -156,7 +165,7 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 	@Override
 	public ShardedSqlSession openSession(ExecutorType execType,
 			TransactionIsolationLevel level) {
-		return new ShardedSqlSessionImpl(this, shardStrategy);
+		return singleShardedSqlSession;
 	}
 	
 	@Override
@@ -174,39 +183,7 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 
 	@Override
 	public Configuration getConfiguration() {
-		//TODO(fengkuok) : 此处应该合并两个Mapper并返回（垂直切分时考虑）
-		return getAnyFactory().getConfiguration();
-		
-//		return new Configuration(){
-//			
-//			@Override
-//			public Collection<String> getMappedStatementNames() {
-//				// TODO Auto-generated method stub
-//				return super.getMappedStatementNames();
-//			}
-//
-//			@Override
-//			public MappedStatement getMappedStatement(String id) {
-//				// TODO Auto-generated method stub
-//				return super.getMappedStatement(id);
-//			}
-//
-//			@Override
-//			public boolean hasMapper(Class<?> type) {
-//				for(SqlSessionFactory factory : getSqlSessionFactories()){
-//					if(factory.getConfiguration().hasMapper(type)){
-//						return true;
-//					}
-//				}
-//				
-//				return false;
-//			}
-//			
-//		  public boolean hasStatement(String statementName) {
-//			    return hasStatement(statementName, true);
-//			  }
-//		
-//		};
+		return configurationsWrapper;
 	}
 	
 	@Override
@@ -218,5 +195,5 @@ public class ShardedSqlSessionFactoryImpl implements ShardedSqlSessionFactory {
 	public Map<SqlSessionFactory, Set<ShardId>> getSqlSessionFactoryShardIdMap() {
 		return sqlSessionFactoryShardIdMap;
 	}
-
+	
 }
