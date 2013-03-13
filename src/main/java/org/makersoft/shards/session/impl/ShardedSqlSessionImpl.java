@@ -100,6 +100,8 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 	 * 
 	 */
 	private Shard getShardForStatement(String statement, List<Shard> shardsToConsider) {
+		//TODO(fengkuok) 此处可做本地缓存
+		
 		// 首先查找主分区？如果没有再找其他分区？
 		for (Shard shard : shardsToConsider) {
 			if (shard.getSqlSessionFactory() != null
@@ -314,7 +316,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 
 		IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
 		if (idGenerator != null) {
-			// 生成主键 DB生成主键是用专有session？
+			//TODO(fengkuok) 生成主键 DB生成主键是用专有session？
 			Serializable id = idGenerator.generate(session, parameter);
 
 			log.debug(String
