@@ -51,7 +51,8 @@ public class UserShardStrategyFactory implements ShardStrategyFactory {
 					User user = (User)obj;
 					return this.determineShardId(user.getGender());
 				}else {
-					throw new IllegalArgumentException("a non-shardable object is being created"); 
+					return null;
+//					throw new IllegalArgumentException("a non-shardable object is being created"); 
 				}
 			}
 
