@@ -151,13 +151,14 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 	@Override
 	public ShardId getShardIdForStatementOrParameter(String statement, Object parameter,
 			List<Shard> shardsToConsider) {
-		// TODO(maxr) optimize this by keeping an identity map of objects to shardId
+		// TODO(fengkuok) optimize this by keeping an identity map of objects to shardId
 		Shard shard = getShardForStatement(statement, shardsToConsider);
 		if (shard == null) {
 			return null;
 		} else if (shard.getShardIds().size() == 1) {
 			return shard.getShardIds().iterator().next();
 		} else {
+			//TODO(fengkuok) 似乎从来不会走到这个逻辑
 			IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
 			if (idGenerator != null) {
 				return idGenerator.extractShardId(this.extractId(parameter));
@@ -221,7 +222,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 
 	@Override
 	public <T> T selectOne(final String statement, final Object parameter) {
-		if (statement.endsWith("getById") && parameter != null) {
+		if (parameter != null && (statement.endsWith("getById") || statement.endsWith("findById"))) {
 			ShardOperation<T> shardOp = new ShardOperation<T>() {
 				public T execute(SqlSession session, ShardId shardId) {
 					return session.<T> selectOne(statement,
@@ -364,12 +365,18 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 		return rows;
 	}
 
+	/**
+	 * 用于写相关操作
+	 */
 	List<Shard> determineShardsViaResolutionStrategyWithWriteOperation(String statement,
 			Object parameter) {
 		Serializable id = this.extractId(parameter);
 		return this.determineShardsObjectsViaResolutionStrategy(statement, parameter, id);
 	}
 
+	/**
+	 * 用于读相关操作
+	 */
 	List<Shard> determineShardsViaResolutionStrategyWithReadOperation(String statement,
 			Object parameter) {
 		return this.determineShardsObjectsViaResolutionStrategy(statement, parameter, null);
