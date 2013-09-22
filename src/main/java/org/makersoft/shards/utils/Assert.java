@@ -11,7 +11,6 @@ package org.makersoft.shards.utils;
 /**
  * Assertion utility class that assists in validating arguments.
  * 
- * @version 2012-8-10 下午2:48:06
  * @author Feng Kuok
  */
 public class Assert {
