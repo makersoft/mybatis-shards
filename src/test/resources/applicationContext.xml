@@ -15,11 +15,7 @@
 		http://www.makersoft.org/schema/shards http://www.makersoft.org/schema/shards/maker-shards.xsd"
 	default-lazy-init="false" default-autowire="byName">
 
-	<description>Spring公共配置</description>
-
-	<context:component-scan base-package="org.makersoft.shards">
-		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-	</context:component-scan>
+	<context:component-scan base-package="org.makersoft.shards"/>
 	
     <!-- Construct Map -->
 	<bean id="dsMap" class="java.util.HashMap">
@@ -67,27 +63,28 @@
 	<!-- 使用annotation定义事务
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 	 -->
+	 
 	<beans profile="test">
 		<!-- 定义受环境影响易变的变量 -->
 		<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
-
+		
 		<!-- Simple连接池 -->
 		<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds1.jdbc.url}" />
 			<property name="username" value="${ds1.jdbc.username}" />
 			<property name="password" value="${ds1.jdbc.password}" />	
 		</bean>
-		
+
 		<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds2.jdbc.url}" />
 			<property name="username" value="${ds2.jdbc.username}" />
 			<property name="password" value="${ds2.jdbc.password}" />	
 		</bean>
 		
 		<bean id="dataSource_3" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds3.jdbc.url}" />
 			<property name="username" value="${ds3.jdbc.username}" />
 			<property name="password" value="${ds3.jdbc.password}" />	
@@ -100,42 +97,8 @@
 			<property name="password" value="${h2.jdbc.password}" />	
 		</bean>
 		
-		<!-- 数据源配置,使用应用DBCP数据库连接池 
-		<bean id="dataSource_1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
-			<property name="driverClassName" value="${mysql.jdbc.driver}"/>
-        	<property name="url" value="${ds1.jdbc.url}"/>
-        	<property name="username" value="${ds1.jdbc.username}"/>
-        	<property name="password" value="${ds1.jdbc.password}"/>
-			<property name="defaultAutoCommit" value="false" />
-		</bean>
-		
-		<bean id="dataSource_2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-			<property name="driverClassName" value="${mysql.jdbc.driver}"/>
-        	<property name="url" value="${ds2.jdbc.url}"/>
-        	<property name="username" value="${ds2.jdbc.username}"/>
-        	<property name="password" value="${ds2.jdbc.password}"/>
-			<property name="defaultAutoCommit" value="false" />
-		</bean>
-		
-		<bean id="dataSource_3" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
-			<property name="driverClassName" value="${mysql.jdbc.driver}"/>
-        	<property name="url" value="${ds3.jdbc.url}"/>
-        	<property name="username" value="${ds3.jdbc.username}"/>
-        	<property name="password" value="${ds3.jdbc.password}"/>
-			<property name="defaultAutoCommit" value="false" />
-		</bean>
-		
-		<bean id="dataSource_h2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-			<property name="driverClassName" value="${h2.jdbc.driver}" />
-			<property name="url" value="${h2.jdbc.url}" />
-			<property name="username" value="${h2.jdbc.username}" />
-			<property name="password" value="${h2.jdbc.password}" />
-			<property name="defaultAutoCommit" value="false" />
-		</bean>
-		-->
-		
 		<bean id="lazyConnectionDataSource_1" name="name_1" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"> 
-			<property name="targetDataSource" ref="dataSource_1"/>  
+			<property name="targetDataSource" ref="dataSource_1"/>
 		</bean> 
 		
 		<bean id="lazyConnectionDataSource_2" name="name_2" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">  
@@ -149,5 +112,18 @@
 		<bean id="lazyConnectionDataSource_h2" name="name_h2" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">  
 			<property name="targetDataSource" ref="dataSource_h2"/>  
 		</bean> 
+		
+		<!-- 初始化数据表结构 -->
+		<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
+		
+		<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
+		
+		<jdbc:initialize-database data-source="dataSource_3" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
 	</beans>
 </beans>

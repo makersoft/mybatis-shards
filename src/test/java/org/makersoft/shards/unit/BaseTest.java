@@ -28,13 +28,13 @@ import org.apache.ibatis.jdbc.ScriptRunner;
  * @author Feng Kuok
  */
 public abstract class BaseTest {
-	
+
 	public static final String APPLICATION_PROPERTIES = "application.properties";
-	public static final String DS1_PROPERTIES = "databases/ds1.properties";
-	public static final String DS2_PROPERTIES = "databases/ds2.properties";
-	
-	public static UnpooledDataSource createUnpooledDataSource(String resource)
-			throws IOException {
+
+	public static final String H2_PROPERTIES = "databases/h2.properties";
+	public static final String MYSQL_PROPERTIES = "databases/mysql.properties";
+
+	public static UnpooledDataSource createUnpooledDataSource(String resource) throws IOException {
 		Properties props = Resources.getResourceAsProperties(resource);
 		UnpooledDataSource ds = new UnpooledDataSource();
 		ds.setDriver(props.getProperty("driver"));
@@ -44,8 +44,7 @@ public abstract class BaseTest {
 		return ds;
 	}
 
-	public static PooledDataSource createPooledDataSource(String resource)
-			throws IOException {
+	public static PooledDataSource createPooledDataSource(String resource) throws IOException {
 		Properties props = Resources.getResourceAsProperties(resource);
 		PooledDataSource ds = new PooledDataSource();
 		ds.setDriver(props.getProperty("driver"));
@@ -55,8 +54,7 @@ public abstract class BaseTest {
 		return ds;
 	}
 
-	public static void runScript(DataSource ds, String resource)
-			throws IOException, SQLException {
+	public static void runScript(DataSource ds, String resource) throws IOException, SQLException {
 		Connection connection = ds.getConnection();
 		try {
 			ScriptRunner runner = new ScriptRunner(connection);
@@ -70,8 +68,8 @@ public abstract class BaseTest {
 		}
 	}
 
-	public static void runScript(ScriptRunner runner, String resource)
-			throws IOException, SQLException {
+	public static void runScript(ScriptRunner runner, String resource) throws IOException,
+			SQLException {
 		Reader reader = Resources.getResourceAsReader(resource);
 		try {
 			runner.runScript(reader);
@@ -79,16 +77,40 @@ public abstract class BaseTest {
 			reader.close();
 		}
 	}
-	
-	public static DataSource createDataSource_1() throws IOException,
-			SQLException {
-		DataSource ds = createUnpooledDataSource(DS1_PROPERTIES);
+
+	public static DataSource createDataSource_1() throws IOException, SQLException {
+
+		Properties props = Resources.getResourceAsProperties(H2_PROPERTIES);
+		UnpooledDataSource ds = new UnpooledDataSource();
+		ds.setDriver(props.getProperty("jdbc.driver"));
+		ds.setUrl(props.getProperty("ds1.jdbc.url"));
+		ds.setUsername(props.getProperty("ds1.jdbc.username"));
+		ds.setPassword(props.getProperty("ds1.jdbc.password"));
+
+		return ds;
+	}
+
+	public static DataSource createDataSource_2() throws IOException, SQLException {
+
+		Properties props = Resources.getResourceAsProperties(H2_PROPERTIES);
+		UnpooledDataSource ds = new UnpooledDataSource();
+		ds.setDriver(props.getProperty("jdbc.driver"));
+		ds.setUrl(props.getProperty("ds2.jdbc.url"));
+		ds.setUsername(props.getProperty("ds2.jdbc.username"));
+		ds.setPassword(props.getProperty("ds2.jdbc.password"));
+
 		return ds;
 	}
 	
-	public static DataSource createDataSource_2() throws IOException,
-		SQLException {
-		DataSource ds = createUnpooledDataSource(DS2_PROPERTIES);
+	public static DataSource createDataSource_3() throws IOException, SQLException {
+
+		Properties props = Resources.getResourceAsProperties(H2_PROPERTIES);
+		UnpooledDataSource ds = new UnpooledDataSource();
+		ds.setDriver(props.getProperty("jdbc.driver"));
+		ds.setUrl(props.getProperty("ds3.jdbc.url"));
+		ds.setUsername(props.getProperty("ds3.jdbc.username"));
+		ds.setPassword(props.getProperty("ds3.jdbc.password"));
+
 		return ds;
 	}
 }

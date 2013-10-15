@@ -8,6 +8,8 @@
  */
 package org.makersoft.shards;
 
+import java.util.List;
+
 import org.makersoft.shards.utils.Assert;
 import org.makersoft.shards.utils.StringUtil;
 
@@ -59,6 +61,17 @@ public class ShardId {
 		Assert.notNull(suffix,"can not set suffix with value null.");
 		
 		this.suffix = suffix;
+	}
+	
+	public static ShardId findByShardId(List<ShardId> shardIds, int id){
+		for(ShardId shardId : shardIds) {
+			if (shardId.getId() == id){
+				return shardId;
+			}
+		}
+		
+		throw new MyBatisShardsException("Not found shard id {" + id +"}");
+		
 	}
 
 	@Override
