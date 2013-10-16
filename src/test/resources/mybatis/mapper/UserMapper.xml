@@ -3,6 +3,22 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.makersoft.shards.mapper.UserMapper">
+	
+	<select id="getById" parameterType="string" resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM maker_shards_user WHERE id = #{id}
+	</select>
+	
+	<select id="findAll" resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM ${prefix}maker_shards_user${suffix}
+	</select>
+	
+	<select id="findByGender" resultType="org.makersoft.shards.domain.User">
+		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender};
+	</select>
+	
+	<select id="getAllCount" resultType="int">
+		SELECT count(*) FROM ${prefix}maker_shards_user${suffix}
+	</select>
 
 	<insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
 		INSERT INTO ${prefix}maker_shards_user${suffix} 
@@ -11,30 +27,14 @@
 			(#{id}, #{username}, #{password}, #{age}, #{gender})
 	</insert>
 	
-	<select id="getUserById" parameterType="string" resultType="org.makersoft.shards.domain.User">
-		SELECT * FROM maker_shards_user WHERE id = #{id}
-	</select>
+	<delete id="deleteAll">
+		DELETE FROM ${prefix}maker_shards_user${suffix}
+	</delete>
 	
-	<select id="getById" parameterType="string" resultType="org.makersoft.shards.domain.User">
-		SELECT * FROM maker_shards_user WHERE id = #{id}
-	</select>
-
-	<select id="findAll" resultType="org.makersoft.shards.domain.User">
-		SELECT * FROM ${prefix}maker_shards_user${suffix}
-	</select>
+	<delete id="deleteById">
+		DELETE FROM ${prefix}maker_shards_user${suffix} where id = #{id}
+	</delete>
 	
-	<select id="findAllUsersOrderByAge" resultType="org.makersoft.shards.domain.User">
-		SELECT * FROM ${prefix}maker_shards_user${suffix} order by age
-	</select>
-	
-	<select id="findByGender" resultType="org.makersoft.shards.domain.User">
-		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender};
-	</select>
-
-	<select id="getAllCount" resultType="int">
-		SELECT count(*) FROM ${prefix}maker_shards_user${suffix}
-	</select>
-
 	<update id="udpateUser" parameterType="org.makersoft.shards.domain.User">
 		UPDATE ${prefix}maker_shards_user${suffix} SET
 		password = #{password}
@@ -46,13 +46,5 @@
 		password = #{password}
 		WHERE id = #{id}
 	</update>
-
-	<delete id="deleteById">
-		DELETE FROM ${prefix}maker_shards_user${suffix} where id = #{id}
-	</delete>
-	
-	<delete id="deleteAll">
-		DELETE FROM ${prefix}maker_shards_user${suffix}
-	</delete>
 	
 </mapper>
