@@ -16,9 +16,7 @@
 
 	<description>MyBatis-Shards Vertical Sharding Demo</description>
 
-	<context:component-scan base-package="org.makersoft.shards">
-		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
-	</context:component-scan>
+	<context:component-scan base-package="org.makersoft.shards"/>
 
 	<!-- Construct Map -->
 	<bean id="dsMap" class="java.util.HashMap">
@@ -30,16 +28,38 @@
 		</constructor-arg>
 	</bean>
 
-	<!-- shards config -->
-	<bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
-		<property name="shardId" value="0"/>
+	<!-- shards config
+	<bean id="shardId_0" class="org.makersoft.shards.ShardId">
+		<constructor-arg>
+			<value>0</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="shardId_1" class="org.makersoft.shards.ShardId">
+		<constructor-arg>
+			<value>1</value>
+		</constructor-arg>
+	</bean> -->
+	
+	<bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
+		<property name="shardId" value="1"/>
+<!-- 		<property name="shardIds"> -->
+<!-- 			<list> -->
+<!-- 				<ref local="shardId_0"/> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
 		<property name="dataSource" ref="lazyConnectionDataSource_1" />
 		<property name="mapperLocations" value="classpath*:/mybatis/mapper/RoleMapper.xml" />
 		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
 	</bean>
 	
-	<bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
-		<property name="shardId" value="1"/>
+	<bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
+		<property name="shardId" value="0"/>
+<!-- 		<property name="shardIds"> -->
+<!-- 			<list> -->
+<!-- 				<ref local="shardId_1"/> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
 		<property name="dataSource" ref="lazyConnectionDataSource_2" />
 		<property name="mapperLocations" value="classpath*:/mybatis/mapper/UserMapper.xml" />
 		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
@@ -54,7 +74,7 @@
 			</array>
 		</property>
 		<property name="shardStrategyFactory">
-			<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory" />
+			<bean class="org.makersoft.shards.strategy.VerticalShardStrategyFactory" />
 		</property>
 		<property name="idGenerator">
 			<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator" />
@@ -69,12 +89,11 @@
 	</bean>
 
 	<!-- 事务配置 -->
-	<bean id="transactionManager"
-		class="org.makersoft.shards.transaction.MultiDataSourcesTransactionManager">
+	<bean id="transactionManager" class="org.makersoft.shards.transaction.MultiDataSourcesTransactionManager">
 		<property name="dataSources">
 			<list>
-				<ref local="lazyConnectionDataSource_1" />
-				<ref local="lazyConnectionDataSource_2" />
+				<ref bean="lazyConnectionDataSource_1" />
+				<ref bean="lazyConnectionDataSource_2" />
 			</list>
 		</property>
 	</bean>
@@ -85,21 +104,18 @@
 	
 	<beans profile="test">
 		<!-- 定义受环境影响易变的变量 -->
-		<context:property-placeholder
-			ignore-resource-not-found="true" location="classpath*:/application.properties" />
+		<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
 		<!-- Simple连接池 -->
-		<bean id="dataSource_1"
-			class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+		<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds1.jdbc.url}" />
 			<property name="username" value="${ds1.jdbc.username}" />
 			<property name="password" value="${ds1.jdbc.password}" />
 		</bean>
 
-		<bean id="dataSource_2"
-			class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+		<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds2.jdbc.url}" />
 			<property name="username" value="${ds2.jdbc.username}" />
 			<property name="password" value="${ds2.jdbc.password}" />
@@ -114,5 +130,14 @@
 			class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
 			<property name="targetDataSource" ref="dataSource_2" />
 		</bean>
+		
+		<!-- 初始化数据表结构 -->
+		<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
+		
+		<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
 	</beans>
 </beans>

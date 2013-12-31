@@ -15,7 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.makersoft.shards.utils.Assert;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -28,7 +29,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 public class MultiDataSourcesTransactionManager implements PlatformTransactionManager, InitializingBean {
 	
-	private static final Logger logger = Logger.getLogger(MultiDataSourcesTransactionManager.class);
+	private final Log log = LogFactory.getLog(getClass());
 
 	/* 数据源 */
 	private List<DataSource> dataSources;
@@ -68,22 +69,22 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 			public void run() {
 				// rollback 和 commit如果不为0
 				while (commitCount.get() != 0) {
-					logger.info("Waiting for commit transaction.");
+					log.info("Waiting for commit transaction.");
 					try {
 						Thread.currentThread().sleep(1);
 					} catch (InterruptedException e) {
-						logger.warn("interrupted when shuting down the query executor:\n{}",e);
+						log.warn("interrupted when shuting down the query executor:\n{}",e);
 					}
 				}
 				while (rollbackCount.get() != 0) {
-					logger.info("Waiting for rollback transaction.");
+					log.info("Waiting for rollback transaction.");
 					try {
 						Thread.currentThread().sleep(1);
 					} catch (InterruptedException e) {
-						logger.warn("interrupted when shuting down the query executor:\n{}",e);
+						log.warn("interrupted when shuting down the query executor:\n{}",e);
 					}
 				}
-				logger.info("Transaction success.");
+				log.info("Transaction success.");
 			}
 		});
 
@@ -95,7 +96,7 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 		
 		MultiDataSourcesTransactionStatus transactionStatus = new MultiDataSourcesTransactionStatus();
 		
-		logger.debug("Operation '" + definition.getName() + "' starting transaction.");
+		log.debug("Operation '" + definition.getName() + "' starting transaction.");
 		
 		for (DataSource dataSource : dataSources) {
 			DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition(definition);
@@ -124,16 +125,16 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 			try {
 				commitCount.addAndGet(1);
 
-				logger.debug("Committing JDBC transaction");
+				log.debug("Committing JDBC transaction");
 				
 				DataSourceTransactionManager txManager = this.transactionManagers.get(dataSource);
 				
 				TransactionStatus transactionStatus = ((MultiDataSourcesTransactionStatus)status).get(dataSource);
 				txManager.commit(transactionStatus);
 
-				logger.debug("Commit JDBC transaction success");
+				log.debug("Commit JDBC transaction success");
 			} catch (Throwable e) {
-				logger.debug("Could not commit JDBC transaction", e);
+				log.debug("Could not commit JDBC transaction", e);
 				ex = e;
 			} finally {
 				commitCount.addAndGet(-1);
@@ -157,7 +158,7 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 		for (int i = dataSources.size() - 1; i >= 0; i--) {
 			DataSource dataSource = dataSources.get(i);
 			try {
-				logger.debug("Rolling back JDBC transaction");
+				log.debug("Rolling back JDBC transaction");
 				
 				rollbackCount.addAndGet(1);
 				
@@ -166,9 +167,9 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 
 				txManager.rollback(currentStatus);
 
-				logger.info("Roll back JDBC transaction success");
+				log.info("Roll back JDBC transaction success");
 			} catch (Throwable e) {
-				logger.info("Could not roll back JDBC transaction", e);
+				log.info("Could not roll back JDBC transaction", e);
 				ex = e;
 			} finally {
 				rollbackCount.addAndGet(-1);

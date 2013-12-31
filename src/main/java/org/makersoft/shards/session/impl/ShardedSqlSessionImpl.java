@@ -265,8 +265,22 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 
 	@Override
 	public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
+		List<ShardId> shardIds = Lists.newArrayList();
+		
 		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithReadOperation(
 				statement, parameter);
+		
+		if (potentialShards != null) {
+			for (Shard shard : potentialShards) {
+				shardIds.addAll(shard.getShardIds());
+			}
+		} else {
+			//
+			ShardId shardId = this.getShardIdForStatementOrParameter(statement, parameter);
+			shardIds = Lists.newArrayList(shardId);
+		}
+
+		Assert.isTrue(!shardIds.isEmpty());
 
 		Assert.notNull(potentialShards, "ShardResolutionStrategy returnd value cann't be null");
 

@@ -17,7 +17,7 @@ import org.makersoft.shards.utils.Assert;
 /**
  * Base implementation for HasShadIdList. Takes care of null/empty checks.
  */
-public abstract class BaseHasShardIdList {
+public abstract class BaseHasShardIdList implements HasShardIdList{
 	// our list of {@link ShardId} objects
 	protected final List<ShardId> shardIds;
 
@@ -34,6 +34,7 @@ public abstract class BaseHasShardIdList {
 		this.shardIds = new ArrayList<ShardId>(shardIds);
 	}
 
+	@Override
 	public List<ShardId> getShardIds() {
 		return Collections.unmodifiableList(shardIds);
 	}

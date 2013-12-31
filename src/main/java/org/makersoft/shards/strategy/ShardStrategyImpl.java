@@ -9,10 +9,12 @@
 package org.makersoft.shards.strategy;
 
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
+import org.makersoft.shards.strategy.access.impl.SequentialShardAccessStrategy;
 import org.makersoft.shards.strategy.reduce.ShardReduceStrategy;
 import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
 import org.makersoft.shards.utils.Assert;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * @author Feng Kuok 
@@ -26,6 +28,8 @@ public class ShardStrategyImpl implements ShardStrategy {
 	private ShardAccessStrategy shardAccessStrategy;
 
 	private ShardReduceStrategy shardReduceStrategy;
+	
+	private final ShardAccessStrategy transactionShardReduceStrategy = new SequentialShardAccessStrategy(); 
 
 	public ShardStrategyImpl(ShardSelectionStrategy shardSelectionStrategy,
 			ShardResolutionStrategy shardResolutionStrategy,
@@ -54,7 +58,8 @@ public class ShardStrategyImpl implements ShardStrategy {
 
 	@Override
 	public ShardAccessStrategy getShardAccessStrategy() {
-		return shardAccessStrategy;
+		
+		return TransactionSynchronizationManager.isCurrentTransactionReadOnly() ? shardAccessStrategy : transactionShardReduceStrategy;
 	}
 
 	@Override

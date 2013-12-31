@@ -19,13 +19,15 @@ import org.makersoft.shards.domain.User;
 @MyBatisMapper
 public interface UserMapper {
 	
-	int insertUser(User user);
-
 	User getById(String id);
 
 	List<User> findAll();
 
 	List<User> findByGender(int gender);
+	
+	int getAllCount();
+	
+	int insertUser(User user);
 
 	int deleteAll();
 
@@ -34,6 +36,5 @@ public interface UserMapper {
 	int udpateUser(User user);
 
 	int updateById(User user);
-
-	int getAllCount();
+	
 }
