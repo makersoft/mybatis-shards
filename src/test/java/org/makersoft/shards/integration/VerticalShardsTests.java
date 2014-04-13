@@ -6,34 +6,29 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  *
  */
-package org.makersoft.shards.unit.persistence;
+package org.makersoft.shards.integration;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.makersoft.shards.domain.Role;
 import org.makersoft.shards.domain.User;
 import org.makersoft.shards.mapper.RoleMapper;
 import org.makersoft.shards.mapper.UserMapper;
 import org.makersoft.shards.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * unit test for vertical shards.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-vertical.xml" })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
-@ActiveProfiles("test")
-public class VerticalShardsTests {
+public class VerticalShardsTests extends BaseIntegrationTest {
 
 	@Autowired(required = true)
 	private UserMapper userMapper;
@@ -75,7 +70,7 @@ public class VerticalShardsTests {
 		}
 		
 		List<User> users = userMapper.findByGender(User.SEX_MALE);
-		assertTrue("find by gender total size error", users.size() == 5);
+		assertTrue("find by gender total size error " + users.size(), users.size() == 5);
 		
 		assertTrue(maleUsers.containsAll(users));
 		

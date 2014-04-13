@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
+	default-lazy-init="false" default-autowire="byName">
+
+	<description>MyBatis-Shards Read Write Access Demo</description>
+
+	<context:component-scan base-package="org.makersoft.shards"/>
+
+	<!-- Construct Map -->
+	<bean id="dsMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="0" value-ref="lazyConnectionDataSource_1" />
+				<entry key="1" value-ref="lazyConnectionDataSource_2" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- shards config
+	<bean id="shardId_0" class="org.makersoft.shards.ShardId">
+		<constructor-arg>
+			<value>0</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="shardId_1" class="org.makersoft.shards.ShardId">
+		<constructor-arg>
+			<value>1</value>
+		</constructor-arg>
+	</bean> -->
+	
+	<bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
+		<property name="shardId" value="1"/>
+<!-- 		<property name="shardIds"> -->
+<!-- 			<list> -->
+<!-- 				<ref local="shardId_0"/> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+		<property name="dataSource" ref="lazyConnectionDataSource_1" />
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/RoleMapper.xml" />
+		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
+	</bean>
+	
+	<bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
+		<property name="shardId" value="0"/>
+<!-- 		<property name="shardIds"> -->
+<!-- 			<list> -->
+<!-- 				<ref local="shardId_1"/> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+		<property name="dataSource" ref="lazyConnectionDataSource_2" />
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/UserMapper.xml" />
+		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
+	</bean>
+
+	<!-- mybatis 配置 -->
+	<bean id="shardedSqlSessionFactory" class="org.makersoft.shards.spring.ShardedSqlSessionFactoryBean">
+		<property name="shardConfigurations">
+			<array>
+				<ref bean="shard_0"/>
+				<ref bean="shard_1"/>
+			</array>
+		</property>
+		<property name="shardStrategyFactory">
+			<bean class="org.makersoft.shards.strategy.VerticalShardStrategyFactory" />
+		</property>
+		<property name="idGenerator">
+			<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator" />
+		</property>
+	</bean>
+
+	<!-- scan for mappers and let them be autowired -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="org.makersoft.shards.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="shardedSqlSessionFactory" />
+		<property name="annotationClass" value="org.makersoft.shards.annotation.MyBatisMapper" />
+	</bean>
+
+	<!-- 事务配置 -->
+	<bean id="transactionManager" class="org.makersoft.shards.transaction.MultiDataSourcesTransactionManager">
+		<property name="dataSources">
+			<list>
+				<ref bean="lazyConnectionDataSource_1" />
+				<ref bean="lazyConnectionDataSource_2" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 使用annotation定义事务 
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" /> 
+	-->
+	
+	<beans profile="test">
+		<!-- 定义受环境影响易变的变量 -->
+		<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
+
+		<!-- Simple连接池 -->
+		<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${jdbc.driver}" />
+			<property name="url" value="${ds1.jdbc.url}" />
+			<property name="username" value="${ds1.jdbc.username}" />
+			<property name="password" value="${ds1.jdbc.password}" />
+		</bean>
+
+		<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+			<property name="driverClass" value="${jdbc.driver}" />
+			<property name="url" value="${ds2.jdbc.url}" />
+			<property name="username" value="${ds2.jdbc.username}" />
+			<property name="password" value="${ds2.jdbc.password}" />
+		</bean>
+
+		<bean id="lazyConnectionDataSource_1"
+			class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+			<property name="targetDataSource" ref="dataSource_1" />
+		</bean>
+
+		<bean id="lazyConnectionDataSource_2"
+			class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+			<property name="targetDataSource" ref="dataSource_2" />
+		</bean>
+		
+		<!-- 初始化数据表结构 -->
+		<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
+		
+		<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
+	</beans>
+</beans>

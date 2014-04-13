@@ -111,6 +111,20 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 		}
 		return null;
 	}
+	
+	private List<Shard> getShardsForStatement(String statement, List<Shard> shardsToConsider) {
+		//TODO(fengkuok) 此处可做本地缓存
+		
+		List<Shard> shards = Lists.newArrayList(); 
+		// 首先查找主分区？如果没有再找其他分区？
+		for (Shard shard : shardsToConsider) {
+			if (shard.getSqlSessionFactory() != null
+					&& shard.getMappedStatementNames().contains(statement)) {
+				shards.add(shard);
+			}
+		}
+		return shards;
+	}
 
 	private SqlSession getSqlSessionForStatement(String statement, List<Shard> shardsToConsider) {
 		Shard shard = getShardForStatement(statement, shardsToConsider);
@@ -125,9 +139,12 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 	 */
 	private List<Shard> shardIdListToShardList(List<ShardId> shardIds) {
 		Set<Shard> shards = Sets.newHashSet();
-		for (ShardId shardId : shardIds) {
-			shards.add(shardIdsToShards.get(shardId));
+		if(shardIds != null && !shardIds.isEmpty()){
+			for (ShardId shardId : shardIds) {
+				shards.add(shardIdsToShards.get(shardId));
+			}
 		}
+		
 		return Lists.newArrayList(shards);
 	}
 
@@ -265,23 +282,10 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 
 	@Override
 	public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
-		List<ShardId> shardIds = Lists.newArrayList();
 		
 		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithReadOperation(
 				statement, parameter);
 		
-		if (potentialShards != null) {
-			for (Shard shard : potentialShards) {
-				shardIds.addAll(shard.getShardIds());
-			}
-		} else {
-			//
-			ShardId shardId = this.getShardIdForStatementOrParameter(statement, parameter);
-			shardIds = Lists.newArrayList(shardId);
-		}
-
-		Assert.isTrue(!shardIds.isEmpty());
-
 		Assert.notNull(potentialShards, "ShardResolutionStrategy returnd value cann't be null");
 
 		return new ShardSelectImpl(potentialShards, new AdHocSelectFactoryImpl(statement,
@@ -393,7 +397,12 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 	 */
 	List<Shard> determineShardsViaResolutionStrategyWithReadOperation(String statement,
 			Object parameter) {
-		return this.determineShardsObjectsViaResolutionStrategy(statement, parameter, null);
+		List<Shard> potentialShards = this.determineShardsObjectsViaResolutionStrategy(statement, parameter, null);
+		
+		//策略返回为空集合则采用全部分片
+		potentialShards = potentialShards.isEmpty() ? shards : potentialShards;
+		
+		return this.getShardsForStatement(statement, potentialShards);
 	}
 
 	/**

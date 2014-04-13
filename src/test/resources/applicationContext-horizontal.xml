@@ -13,7 +13,7 @@
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
 	default-lazy-init="false" default-autowire="byName">
 
-	<description>MyBatis-Shards Vertical Sharding Demo</description>
+	<description>MyBatis-Shards Horizontal Sharding Demo</description>
 
 	<context:component-scan base-package="org.makersoft.shards">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -36,7 +36,7 @@
         <property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
     	<property name="dataSources" ref="dsMap"/>
         <property name="shardStrategyFactory">
-        	<bean class="org.makersoft.shards.strategy.UserShardStrategyFactory"/>
+        	<bean class="org.makersoft.shards.strategy.HorizontalShardStrategyFactory"/>
         </property>
         <property name="idGenerator">
         	<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"/>
@@ -71,26 +71,27 @@
 
 		<!-- Simple连接池 -->
 		<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds1.jdbc.url}" />
 			<property name="username" value="${ds1.jdbc.username}" />
 			<property name="password" value="${ds1.jdbc.password}" />	
 		</bean>
 		
 		<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds2.jdbc.url}" />
 			<property name="username" value="${ds2.jdbc.username}" />
 			<property name="password" value="${ds2.jdbc.password}" />	
 		</bean>
 		
 		<bean id="dataSource_3" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${mysql.jdbc.driver}" />
+			<property name="driverClass" value="${jdbc.driver}" />
 			<property name="url" value="${ds3.jdbc.url}" />
 			<property name="username" value="${ds3.jdbc.username}" />
 			<property name="password" value="${ds3.jdbc.password}" />	
 		</bean>
 		
+		<!-- reduce data source -->
 		<bean id="dataSource_h2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 			<property name="driverClass" value="${h2.jdbc.driver}" />
 			<property name="url" value="${h2.jdbc.url}" />
@@ -98,6 +99,7 @@
 			<property name="password" value="${h2.jdbc.password}" />	
 		</bean>
 		
+		<!-- lazy connection data source proxy -->
 		<bean id="lazyConnectionDataSource_1" name="name_1" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"> 
 			<property name="targetDataSource" ref="dataSource_1"/>  
 		</bean> 
@@ -113,5 +115,18 @@
 		<bean id="lazyConnectionDataSource_h2" name="name_h2" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">  
 			<property name="targetDataSource" ref="dataSource_h2"/>  
 		</bean> 
+		
+		<!-- 初始化数据表结构 -->
+		<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
+		
+		<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
+		
+		<jdbc:initialize-database data-source="dataSource_3" ignore-failures="ALL">
+			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+		</jdbc:initialize-database>	
 	</beans>
 </beans>

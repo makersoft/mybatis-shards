@@ -1,5 +1,21 @@
 MyBatis-Shards Change Log
 
+
+Release 1.0.0.Alpha3 - 2014.04.01
+
+  NEW FEATURES
+	
+	1. 实现读写分离
+	
+  IMPROVEMENTS
+
+    1. 改善代码质量
+    
+  BUG FIXES
+
+	1. No
+
+
 Release 1.0.0.Alpha2 - 2012.09.28
 
   NEW FEATURES

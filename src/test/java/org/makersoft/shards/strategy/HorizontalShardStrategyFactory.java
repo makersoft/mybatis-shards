@@ -8,6 +8,7 @@
  */
 package org.makersoft.shards.strategy;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.ibatis.session.RowBounds;
 import org.makersoft.shards.ShardId;
+import org.makersoft.shards.domain.User;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.access.impl.ParallelShardAccessStrategy;
 import org.makersoft.shards.strategy.exit.impl.RowCountExitOperation;
@@ -27,10 +29,10 @@ import org.makersoft.shards.strategy.resolution.impl.AllShardsShardResolutionStr
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
 
 /**
- * 
+ * 水平切分策略
  */
-public class VerticalShardStrategyFactory implements ShardStrategyFactory {
-	
+public class HorizontalShardStrategyFactory implements ShardStrategyFactory {
+
 	@Override
 	public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
 		ShardSelectionStrategy pss = this.getShardSelectionStrategy(shardIds);
@@ -45,9 +47,24 @@ public class VerticalShardStrategyFactory implements ShardStrategyFactory {
 
 			@Override
 			public ShardId selectShardIdForNewObject(String statement, Object obj) {
+				if(obj instanceof User){
+					User user = (User)obj;
+					return this.determineShardId(user.getGender());
+				}else {
+					return null;
+				}
+			}
+
+			private ShardId determineShardId(int gender) {
+				if(User.SEX_MALE == gender){
+					return ShardId.findByShardId(shardIds, 0);
+				}else if(User.SEX_FEMALE == gender){
+					return ShardId.findByShardId(shardIds, 1);
+				}
+					
 				return null;
 			}
-			
+
 		};
 	}
 	
@@ -57,9 +74,20 @@ public class VerticalShardStrategyFactory implements ShardStrategyFactory {
 			@Override
 			public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
 					ShardResolutionStrategyData shardResolutionStrategyData) {
+				String statement = shardResolutionStrategyData.getStatement();
+				Object parameter = shardResolutionStrategyData.getParameter();
+//				Serializable id = shardResolutionStrategyData.getId();
 				
-//				return super.getShardIds();
-				return null;
+				//自定义规则...
+				if(statement.endsWith("findByGender")){
+					if(((Integer)parameter) == User.SEX_MALE){
+						return Collections.singletonList(ShardId.findByShardId(shardIds, 0));
+					}else {
+						return Collections.singletonList(ShardId.findByShardId(shardIds, 1));
+					}
+				}
+				
+				return super.getShardIds();
 			}
 		};
 	}
@@ -77,6 +105,8 @@ public class VerticalShardStrategyFactory implements ShardStrategyFactory {
 				TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), factory);
 
 		return new ParallelShardAccessStrategy(exec);
+		
+//		return new SequentialShardAccessStrategy();
 	}
 	
 	private ShardReduceStrategy getShardReduceStrategy() {

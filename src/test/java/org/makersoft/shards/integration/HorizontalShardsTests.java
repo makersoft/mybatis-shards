@@ -6,7 +6,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  *
  */
-package org.makersoft.shards.unit.persistence;
+package org.makersoft.shards.integration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,25 +15,17 @@ import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.makersoft.shards.domain.User;
 import org.makersoft.shards.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * unit test for horizontal shards.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
-@ActiveProfiles("test")
-public class HorizontalShardsTests {
-
+@ContextConfiguration(locations = { "classpath:applicationContext-horizontal.xml" })
+public class HorizontalShardsTests extends BaseIntegrationTest {
 
 	@Autowired(required = true)
 	private UserMapper userMapper;
