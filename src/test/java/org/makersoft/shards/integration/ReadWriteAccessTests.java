@@ -8,6 +8,8 @@
  */
 package org.makersoft.shards.integration;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -16,4 +18,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:applicationContext-read-write-access.xml" })
 public class ReadWriteAccessTests extends BaseIntegrationTest{
 
+    @Test
+    public void test_read(){
+        Assert.assertTrue(true);
+    }
 }
