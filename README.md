@@ -18,7 +18,7 @@ MyBatis Shards采用无侵入性的方式，无需更改现有程序代码，只
  - [Shardbatis][3]
 
 
-联系方式：admin@makersoft.org
+联系方式：guofengcn@126.com
 
   [1]: http://www.makersoft.org
   [2]: http://code.alibabatech.com/wiki/display/CobarClient/Home
