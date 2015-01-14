@@ -17,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 多数据源事务管理器单元测试
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/org/makersoft/shards/unit/transaction/applicationContext.xml" })
+@ContextConfiguration(locations = { "classpath*:applicationContext-tx.xml" })
 @TransactionConfiguration(transactionManager = "multiDataSourcesTransactionManager", defaultRollback = false)
-@ActiveProfiles("test")
 public class MultipleDataSourcesTransactionManagerTests {
 
 	@Autowired
@@ -33,10 +32,11 @@ public class MultipleDataSourcesTransactionManagerTests {
 	@Test
 	@Transactional(rollbackFor={Exception.class,RuntimeException.class})
 	@Rollback
-	public void testTransactionCommitAndRollback() throws Exception{
+	public void test_transaction_commit_and_rollback() throws Exception{
 
 		int affectedrows = jdbcTemplate_1.update("insert into maker_shards_user (id,username,password,age,gender) values (1,'makersoft','makersoft',23,1)");
 		Assert.assertEquals(affectedrows, 1);
+
 		affectedrows = jdbcTemplate_2.update("insert into maker_shards_user (id,username,password,age,gender) values (1,'makersoft','makersoft',22,0)");
 		Assert.assertEquals(affectedrows, 1);
 
