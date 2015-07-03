@@ -18,6 +18,10 @@ MyBatis Shards采用无侵入性的方式，无需更改现有程序代码，只
  - [Shardbatis][3]
 
 
+## CI status
+
+[![Build Status](https://travis-ci.org/makersoft/mybatis-shards.svg?branch=master)](https://travis-ci.org/makersoft/mybatis-shards)
+
 联系方式：guofengcn@126.com
 
   [1]: http://www.makersoft.org
