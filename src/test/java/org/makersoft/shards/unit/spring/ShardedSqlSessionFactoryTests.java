@@ -16,21 +16,16 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext.xml" })
-@TransactionConfiguration(transactionManager = "multiDataSourcesTransactionManager", defaultRollback = false)
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 @ActiveProfiles("test")
 public class ShardedSqlSessionFactoryTests {
 
-	@Autowired(required=true)
-	ShardedSqlSessionFactory factory;
+	@Autowired(required = true)
+	private ShardedSqlSessionFactory factory;
 	
-	@Before
-	public void before() throws Exception{
+	@Test
+	public void test_factory() throws Exception{
 		Assert.assertNotNull(factory);
 	}
 	
-	@Test
-	public void testSave() throws Exception{
-		
-		
-	}
 }

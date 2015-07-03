@@ -29,9 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
  * unit test for horizontal shards.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
+@ContextConfiguration(locations = { "classpath:applicationContext-horizontal.xml" })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
-@ActiveProfiles("test")
 public class HorizontalShardsTests {
 
 

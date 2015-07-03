@@ -25,6 +25,7 @@ import org.makersoft.shards.id.IdGenerator;
 import org.makersoft.shards.session.ShardedSqlSessionFactory;
 import org.makersoft.shards.strategy.ShardStrategyFactory;
 import org.makersoft.shards.utils.Assert;
+import org.makersoft.shards.utils.StringUtil;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -100,22 +101,41 @@ public class ShardedSqlSessionFactoryBean implements
 				
 				Assert.notNull(shardConfiguration.getShardId(), "shard id can not be null.");
 				Assert.notNull(shardConfiguration.getShardDataSource(), "data source can not be null.");
-				
+
+				if(shardConfiguration.getConfigLocation() == null) {
+					shardConfiguration.setConfigLocation(this.configLocation);
+				}
+
+				if(shardConfiguration.getMapperLocations() == null || shardConfiguration.getMapperLocations().length == 0) {
+					shardConfiguration.setMapperLocations(this.mapperLocations);
+				}
+
 				SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
 				factoryBean.setConfigLocation(shardConfiguration.getConfigLocation());
 				factoryBean.setMapperLocations(shardConfiguration.getMapperLocations());
+
 				factoryBean.setDataSource(shardConfiguration.getShardDataSource());
 				factoryBean.setEnvironment(this.environment);
 				factoryBean.setConfigurationProperties(this.configurationProperties);
 				factoryBean.setPlugins(this.plugins);
 				factoryBean.setTypeHandlers(this.typeHandlers);
+
+				if(StringUtil.isEmptyOrWhitespace(shardConfiguration.getTypeHandlersPackage())) {
+					shardConfiguration.setTypeHandlersPackage(this.typeHandlersPackage);
+				}
+
 				factoryBean.setTypeHandlersPackage(shardConfiguration.getTypeHandlersPackage());
 				factoryBean.setTypeAliases(this.typeAliases);
+
+				if(StringUtil.isEmptyOrWhitespace(shardConfiguration.getTypeAliasesPackage())) {
+					shardConfiguration.setTypeAliasesPackage(this.typeAliasesPackage);
+				}
+
 				factoryBean.setTypeAliasesPackage(shardConfiguration.getTypeAliasesPackage());
-				
+
 				SqlSessionFactory sessionFacotry = factoryBean.getObject();
 				shardConfiguration.setSqlSessionFactory(sessionFacotry);
-				
+
 				shardConfigs.add(shardConfiguration);
 			}
 			

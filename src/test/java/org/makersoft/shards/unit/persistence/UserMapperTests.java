@@ -48,60 +48,60 @@ public class UserMapperTests {
 			String password = "makersoft_" + i;
 			int age = random.nextInt(30);
 			int gender = (i % 2 == 0) ? User.SEX_MALE : User.SEX_FEMALE;
-			
+
 			User user = this.insertUser(username, password, age, gender);
-			
+
 			Assert.assertNotNull(user.getId());
 		}
 	}
-	
+
 	@Test
 	@Transactional
 	public void testUpdate() throws Exception{
 		User user = this.insertUser("makersoft", "makersoft", 26, User.SEX_MALE);
-		
+
 		user.setUsername("www.makersoft.org");
 		user.setPassword("www.makersoft.org");
-		
+
 		//update entity
 		int rows = userMapper.udpateUser(user);
-		
+
 		Assert.assertEquals(1, rows);
 	}
-	
+
 	@Test
 	@Transactional
 	public void testUpdateById() throws Exception {
 		User user = this.insertUser("makersoft", "makersoft", 26, User.SEX_MALE);
-		
+
 		user.setUsername("username");
 		user.setPassword("password");
-		
+
 		int rows = userMapper.updateById(user);
 		Assert.assertEquals(1, rows);
 	}
-	
+
 	@Test
 	@Transactional
 	public void testGetAllCount() throws Exception{
 		int count = userMapper.getAllCount();
 		Assert.assertEquals(0, count);
-		
+
 		for(int i = 0; i < 10; i++){
 			String username = "makersoft_" + i;
 			String password = "makersoft_" + i;
 			int age = random.nextInt(30);
 			int gender = (i % 2 == 0) ? User.SEX_MALE : User.SEX_FEMALE;
-			
+
 			User user = this.insertUser(username, password, age, gender);
 			Assert.assertNotNull(user.getId());
 		}
-		
+
 		count = userMapper.getAllCount();
-		
+
 		Assert.assertEquals(10, count);
 	}
-	
+
 	@Test
 	@Transactional
 	public void testFindAll() throws Exception{
@@ -111,26 +111,26 @@ public class UserMapperTests {
 			String password = "makersoft_" + i;
 			int age = random.nextInt(30);
 			int gender = (i % 2 == 0) ? User.SEX_MALE : User.SEX_FEMALE;
-			
+
 			User user = this.insertUser(username, password, age, gender);
 			Assert.assertNotNull(user.getId());
-			
+
 			caches.put(user.getId(), user);
 		}
-		
-		
+
+
 		List<User> users = userMapper.findAll();
 		Assert.assertEquals(10, users.size());
-		
+
 		for(User entity : users) {
 			User user = caches.get(entity.getId());
 			Assert.assertNotNull(user);
-			
+
 			//has override hashCode and equals method
 			Assert.assertEquals(entity, user);
 		}
 	}
-	
+
 	@Test
 	@Transactional
 	public void testFindByGender() throws Exception{
@@ -139,39 +139,39 @@ public class UserMapperTests {
 			String password = "makersoft_" + i;
 			int age = random.nextInt(30);
 			int gender = (i % 2 == 0) ? User.SEX_MALE : User.SEX_FEMALE;
-			
+
 			User user = this.insertUser(username, password, age, gender);
 			Assert.assertNotNull(user.getId());
 		}
-		
+
 		List<User> users = userMapper.findByGender(User.SEX_MALE);
 		Assert.assertEquals(5, users.size());
 	}
-	
+
 	@Test
 	@Transactional
 	public void testGetById() throws Exception{
 		User user = this.insertUser("makersoft", "makersoft", 26, User.SEX_MALE);
 		User result = userMapper.getById(user.getId());
-		
+
 		Assert.assertNotNull(result);
-		
+
 		Assert.assertEquals(user, result);
 	}
-	
+
 	@Test
 	@Transactional
 	public void testDeleteById() throws Exception{
 		User user = this.insertUser("makersoft", "makersoft", 26, User.SEX_MALE);
 		int rows = userMapper.deleteById(user.getId());
 		Assert.assertEquals(1, rows);
-		
+
 		user = userMapper.getById(user.getId());
-		
+
 		Assert.assertNull(user);
-		
+
 	}
-	
+
 	@Test
 	@Transactional
 	public void testDelete() throws Exception{
@@ -180,28 +180,28 @@ public class UserMapperTests {
 			String password = "makersoft_" + i;
 			int age = random.nextInt(30);
 			int gender = (i % 2 == 0) ? User.SEX_MALE : User.SEX_FEMALE;
-			
+
 			User user = this.insertUser(username, password, age, gender);
 			Assert.assertNotNull(user.getId());
 		}
-		
+
 		int rows = userMapper.deleteAll();
 		Assert.assertEquals(10, rows);
-		
+
 		int count = userMapper.getAllCount();
 		Assert.assertEquals(0, count);
 	}
-	
+
 	/**
-	 * for insert new user 
+	 * for insert new user
 	 */
 	private User insertUser(String username, String password, int age,  int gender){
 		User user = new User(username, password, gender);
 		user.setAge(age);
 		userMapper.insertUser(user);
-		
+
 		Assert.assertNotNull(user.getId());
-		
+
 		return user;
 	}
 
