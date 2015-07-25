@@ -360,7 +360,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithWriteOperation(
 				statement, parameter);
 
-		if (potentialShards != null) {
+		if (potentialShards != null && potentialShards.size() > 0) {
 			for (Shard shard : potentialShards) {
 				shardIds.addAll(shard.getShardIds());
 			}
@@ -442,7 +442,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 
 		List<Shard> potentialShards = determineShardsViaResolutionStrategyWithWriteOperation(
 				statement, parameter);
-		if (potentialShards != null) {
+		if (potentialShards != null && potentialShards.size() > 0) {
 			for (Shard shard : potentialShards) {
 				shardIds.addAll(shard.getShardIds());
 			}

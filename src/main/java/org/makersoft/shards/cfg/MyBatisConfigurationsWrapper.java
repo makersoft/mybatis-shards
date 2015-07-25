@@ -8,6 +8,7 @@
  */
 package org.makersoft.shards.cfg;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.ibatis.binding.BindingException;
@@ -98,6 +99,46 @@ public class MyBatisConfigurationsWrapper extends Configuration {
 		}
 
 		throw new BindingException("Invalid bound statement (not found): " + id, exception);
+	}
+
+	@Override
+	public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
+
+		if (validateIncompleteStatements) {
+			buildAllStatements();
+		}
+
+		for (SqlSessionFactory sqlSessionFactory : getSqlSessionFactories()) {
+			try {
+				boolean has = sqlSessionFactory.getConfiguration().getMappedStatementNames().contains(statementName);
+
+				if(has) {
+					return true;
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		return false;
+
+	}
+
+	@Override
+	protected void buildAllStatements() {
+		for (SqlSessionFactory sqlSessionFactory : getSqlSessionFactories()) {
+			try {
+				Configuration configuration = sqlSessionFactory.getConfiguration();
+
+				Method m = Configuration.class.getDeclaredMethod("buildAllStatements");
+				m.setAccessible(true);
+				m.invoke(configuration);
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+
 	}
 
 	private List<SqlSessionFactory> getSqlSessionFactories() {
