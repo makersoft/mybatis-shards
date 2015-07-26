@@ -18,36 +18,8 @@
 
 	<context:component-scan base-package="org.makersoft.shards"/>
 
-	<!-- Construct Map -->
-	<bean id="dsMap" class="java.util.HashMap">
-		<constructor-arg>
-			<map>
-				<entry key="0" value-ref="lazyConnectionDataSource_1" />
-				<entry key="1" value-ref="lazyConnectionDataSource_2" />
-			</map>
-		</constructor-arg>
-	</bean>
-
-	<!-- shards config
-	<bean id="shardId_0" class="org.makersoft.shards.ShardId">
-		<constructor-arg>
-			<value>0</value>
-		</constructor-arg>
-	</bean>
-	
-	<bean id="shardId_1" class="org.makersoft.shards.ShardId">
-		<constructor-arg>
-			<value>1</value>
-		</constructor-arg>
-	</bean> -->
-	
 	<bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
 		<property name="shardId" value="1"/>
-<!-- 		<property name="shardIds"> -->
-<!-- 			<list> -->
-<!-- 				<ref local="shardId_0"/> -->
-<!-- 			</list> -->
-<!-- 		</property> -->
 		<property name="dataSource" ref="lazyConnectionDataSource_1" />
 		<property name="mapperLocations" value="classpath*:/mybatis/mapper/RoleMapper.xml" />
 		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
@@ -55,11 +27,6 @@
 	
 	<bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
 		<property name="shardId" value="0"/>
-<!-- 		<property name="shardIds"> -->
-<!-- 			<list> -->
-<!-- 				<ref local="shardId_1"/> -->
-<!-- 			</list> -->
-<!-- 		</property> -->
 		<property name="dataSource" ref="lazyConnectionDataSource_2" />
 		<property name="mapperLocations" value="classpath*:/mybatis/mapper/UserMapper.xml" />
 		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
@@ -74,7 +41,7 @@
 			</array>
 		</property>
 		<property name="shardStrategyFactory">
-			<bean class="org.makersoft.shards.strategy.VerticalShardStrategyFactory" />
+			<bean class="org.makersoft.shards.strategy.internal.VerticalShardStrategyFactory" />
 		</property>
 		<property name="idGenerator">
 			<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator" />

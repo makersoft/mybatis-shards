@@ -74,7 +74,7 @@
 			</array>
 		</property>
 		<property name="shardStrategyFactory">
-			<bean class="org.makersoft.shards.strategy.VerticalShardStrategyFactory" />
+			<bean class="org.makersoft.shards.strategy.internal.ReadWriteAccessShardStrategyFactory" />
 		</property>
 		<property name="idGenerator">
 			<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator" />
