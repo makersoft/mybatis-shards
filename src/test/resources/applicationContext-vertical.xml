@@ -18,6 +18,10 @@
 
 	<context:component-scan base-package="org.makersoft.shards"/>
 
+	<bean id="dbType" class="org.makersoft.shards.utils.DBFeatures" factory-method="discoverDBType">
+		<constructor-arg name="dataSource" ref="lazyConnectionDataSource_1"  />
+	</bean>
+
 	<bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
 		<property name="shardId" value="1"/>
 		<property name="dataSource" ref="lazyConnectionDataSource_1" />
@@ -100,11 +104,11 @@
 		
 		<!-- 初始化数据表结构 -->
 		<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
-			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+			<jdbc:script location="classpath:/databases/sql/#{dbType}/shards.schema.sql" />
 		</jdbc:initialize-database>	
 		
 		<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
-			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+			<jdbc:script location="classpath:/databases/sql/#{dbType}/shards.schema.sql" />
 		</jdbc:initialize-database>	
 	</beans>
 </beans>
