@@ -19,11 +19,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.executor.BatchResult;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.ExecutorException;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.*;
 import org.makersoft.shards.Shard;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.ShardImpl;
@@ -345,7 +345,26 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 			ParameterUtil.generatePrimaryKey(parameter, id);
 		}
 
-		return session.insert(statement, ParameterUtil.resolve(parameter, shardId));
+		final Object params = ParameterUtil.resolve(parameter, shardId);
+
+		final int rows = session.insert(statement, params);
+
+        //fixed set keys
+		if(params instanceof Map) {
+			Map map = (Map) params;
+			Configuration configuration = session.getConfiguration();
+			MappedStatement ms = configuration.getMappedStatement(statement);
+
+			if (parameter != null && ms != null && ms.getKeyProperties() != null) {
+				String keyProperty = ms.getKeyProperties()[0]; // just one key property is supported
+				final MetaObject metaParam = configuration.newMetaObject(parameter);
+				if (keyProperty != null && metaParam.hasSetter(keyProperty)) {
+					metaParam.setValue(keyProperty, map.get(keyProperty));
+				}
+			}
+		}
+
+		return rows;
 	}
 
 	@Override
