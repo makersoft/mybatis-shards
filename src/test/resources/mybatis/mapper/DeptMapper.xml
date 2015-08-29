@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ @(#)DeptMapper.xml 8/18/15 3:25 PM
+  ~
+  ~ Copyright (c) 2011-2015 Makersoft.org all rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.makersoft.shards.mapper.shard0.DeptMapper">
+
+	<insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="org.makersoft.shards.domain.shard0.Dept">
+		INSERT INTO maker_shards_dept
+			(name, code)
+		VALUES
+			(#{name}, #{code})
+	</insert>
+
+</mapper>

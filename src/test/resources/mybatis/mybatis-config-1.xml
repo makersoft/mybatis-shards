@@ -33,7 +33,7 @@
 	</environments>
 
 	<mappers>
-		<mapper resource="mybatis/mapper/RoleMapper.xml" />
+		<mapper resource="mybatis/mapper/shard1/RoleMapper.xml" />
 	</mappers>
 	
 </configuration>

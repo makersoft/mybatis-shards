@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.ibatis.session.RowBounds;
 import org.makersoft.shards.ShardId;
-import org.makersoft.shards.domain.User;
+import org.makersoft.shards.domain.shard0.User;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.access.impl.ParallelShardAccessStrategy;
 import org.makersoft.shards.strategy.exit.impl.RowCountExitOperation;

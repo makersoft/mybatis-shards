@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.cfg.ShardConfiguration;
 import org.makersoft.shards.cfg.impl.ShardConfigurationImpl;
-import org.makersoft.shards.domain.User;
+import org.makersoft.shards.domain.shard0.User;
 import org.makersoft.shards.session.impl.ShardedSqlSessionFactoryBuilder;
 import org.makersoft.shards.strategy.ShardStrategy;
 import org.makersoft.shards.strategy.ShardStrategyFactory;
@@ -110,7 +110,7 @@ public class ShardedSqlSessionTests extends BaseTest {
 	public void testSelectAllUsers() throws Exception {
 		SqlSession session = factory.openSession();
 		try {
-			List<User> users = session.selectList("org.makersoft.shards.mapper.UserMapper.findAll");
+			List<User> users = session.selectList("org.makersoft.shards.mapper.shard0.UserMapper.findAll");
 			Assert.assertEquals(0, users.size());
 		} finally {
 			session.close();

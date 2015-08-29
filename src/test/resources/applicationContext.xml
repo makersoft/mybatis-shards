@@ -27,7 +27,7 @@
 
     <!-- mybatis 配置-->
     <bean id="shardedSqlSessionFactory" class="org.makersoft.shards.spring.ShardedSqlSessionFactoryBean">
-        <property name="mapperLocations" value="classpath*:/mybatis/mapper/*Mapper.xml"/>
+        <property name="mapperLocations" value="classpath*:/mybatis/mapper/**/*Mapper.xml"/>
         <property name="typeAliasesPackage" value="org.makersoft.shards.domain"/>
         <property name="dataSources" ref="dsMap"/>
         <property name="shardStrategyFactory">

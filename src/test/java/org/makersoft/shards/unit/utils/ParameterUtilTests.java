@@ -18,7 +18,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.makersoft.shards.ShardId;
-import org.makersoft.shards.domain.User;
+import org.makersoft.shards.domain.shard0.User;
 import org.makersoft.shards.utils.ParameterUtil;
 
 /**

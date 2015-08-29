@@ -1,5 +1,6 @@
 drop table if exists maker_shards_user;
 drop table if exists maker_shards_role;
+drop table if exists maker_shards_dept;
 
 CREATE TABLE maker_shards_user (
    id varchar(32) NOT NULL,
@@ -15,4 +16,10 @@ CREATE TABLE maker_shards_role(
 	name varchar(64) NOT NULL,
 	code varchar(64) NOT null,
 	PRIMARY KEY (id)
+);
+
+CREATE TABLE maker_shards_dept(
+   id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+   name varchar(64) NOT NULL,
+   code varchar(64) NOT null
 );

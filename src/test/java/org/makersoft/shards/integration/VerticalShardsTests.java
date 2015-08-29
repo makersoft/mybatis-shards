@@ -15,10 +15,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.makersoft.shards.domain.Role;
-import org.makersoft.shards.domain.User;
-import org.makersoft.shards.mapper.RoleMapper;
-import org.makersoft.shards.mapper.UserMapper;
+import org.makersoft.shards.domain.shard1.Role;
+import org.makersoft.shards.domain.shard0.User;
+import org.makersoft.shards.mapper.shard1.RoleMapper;
+import org.makersoft.shards.mapper.shard0.UserMapper;
 import org.makersoft.shards.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

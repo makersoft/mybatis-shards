@@ -14,8 +14,8 @@ import java.util.Map;
 import org.apache.ibatis.session.RowBounds;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.annotation.ShardStrategy;
-import org.makersoft.shards.domain.User;
-import org.makersoft.shards.mapper.UserMapper;
+import org.makersoft.shards.domain.shard0.User;
+import org.makersoft.shards.mapper.shard0.UserMapper;
 import org.makersoft.shards.strategy.selection.SelectionStrategy;
 
 /**

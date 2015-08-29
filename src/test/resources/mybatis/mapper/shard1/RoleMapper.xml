@@ -2,17 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.makersoft.shards.mapper.RoleMapper">
+<mapper namespace="org.makersoft.shards.mapper.shard1.RoleMapper">
 
-  <select id="getById" parameterType="long" resultType="org.makersoft.shards.domain.Role">
+  <select id="getById" parameterType="long" resultType="org.makersoft.shards.domain.shard1.Role">
     SELECT * FROM maker_shards_role WHERE id = #{id}
   </select>
 
-  <select id="findAll" resultType="org.makersoft.shards.domain.Role">
+  <select id="findAll" resultType="org.makersoft.shards.domain.shard1.Role">
     SELECT * FROM maker_shards_role
   </select>
 
-  <update id="update" parameterType="org.makersoft.shards.domain.Role">
+  <update id="update" parameterType="org.makersoft.shards.domain.shard1.Role">
     UPDATE ACCOUNT SET
       EMAIL = #{email},
       FIRSTNAME = #{firstName},
@@ -28,7 +28,7 @@
     WHERE USERID = #{username}
   </update>
 
-  <insert id="insert" parameterType="org.makersoft.shards.domain.Role">
+  <insert id="insert" parameterType="org.makersoft.shards.domain.shard1.Role">
   	INSERT INTO maker_shards_role (id,name,code) VALUES (#{id}, #{name},#{code})
   </insert>
 

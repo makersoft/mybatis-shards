@@ -2,17 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.makersoft.shards.mapper.UserMapper">
+<mapper namespace="org.makersoft.shards.mapper.shard0.UserMapper">
 	
-	<select id="getById" parameterType="string" resultType="org.makersoft.shards.domain.User">
+	<select id="getById" parameterType="string" resultType="org.makersoft.shards.domain.shard0.User">
 		SELECT * FROM maker_shards_user WHERE id = #{id}
 	</select>
 	
-	<select id="findAll" resultType="org.makersoft.shards.domain.User">
+	<select id="findAll" resultType="org.makersoft.shards.domain.shard0.User">
 		SELECT * FROM ${prefix}maker_shards_user${suffix}
 	</select>
 	
-	<select id="findByGender" resultType="org.makersoft.shards.domain.User">
+	<select id="findByGender" resultType="org.makersoft.shards.domain.shard0.User">
 		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender};
 	</select>
 	
@@ -20,7 +20,7 @@
 		SELECT count(*) FROM ${prefix}maker_shards_user${suffix}
 	</select>
 
-	<insert id="insertUser" parameterType="org.makersoft.shards.domain.User">
+	<insert id="insertUser" parameterType="org.makersoft.shards.domain.shard0.User">
 		INSERT INTO ${prefix}maker_shards_user${suffix} 
 			(id, username, password, age, gender) 
 		VALUES
@@ -35,12 +35,12 @@
 		DELETE FROM ${prefix}maker_shards_user${suffix} where id = #{id}
 	</delete>
 	
-	<update id="udpateUser" parameterType="org.makersoft.shards.domain.User">
+	<update id="udpateUser" parameterType="org.makersoft.shards.domain.shard0.User">
 		UPDATE ${prefix}maker_shards_user${suffix} SET
 		password = #{password}
 	</update>
 
-	<update id="updateById" parameterType="org.makersoft.shards.domain.User">
+	<update id="updateById" parameterType="org.makersoft.shards.domain.shard0.User">
 		UPDATE ${prefix}maker_shards_user${suffix} SET
 		username = #{username},
 		password = #{password}

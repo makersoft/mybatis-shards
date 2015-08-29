@@ -21,15 +21,15 @@
 	<bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
 		<property name="shardId" value="1"/>
 		<property name="dataSource" ref="lazyConnectionDataSource_1" />
-		<property name="mapperLocations" value="classpath*:/mybatis/mapper/RoleMapper.xml" />
-		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/shard1/RoleMapper.xml" />
+		<property name="typeAliasesPackage" value="org.makersoft.shards.domain.shard1" />
 	</bean>
 	
 	<bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
 		<property name="shardId" value="0"/>
 		<property name="dataSource" ref="lazyConnectionDataSource_2" />
-		<property name="mapperLocations" value="classpath*:/mybatis/mapper/UserMapper.xml" />
-		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/shard0/UserMapper.xml" />
+		<property name="typeAliasesPackage" value="org.makersoft.shards.domain.shard0" />
 	</bean>
 
 	<!-- mybatis 配置 -->

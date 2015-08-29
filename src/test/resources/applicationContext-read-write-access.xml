@@ -49,7 +49,7 @@
 <!-- 			</list> -->
 <!-- 		</property> -->
 		<property name="dataSource" ref="lazyConnectionDataSource_1" />
-		<property name="mapperLocations" value="classpath*:/mybatis/mapper/RoleMapper.xml" />
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/shard1/RoleMapper.xml" />
 		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
 	</bean>
 	
@@ -61,7 +61,7 @@
 <!-- 			</list> -->
 <!-- 		</property> -->
 		<property name="dataSource" ref="lazyConnectionDataSource_2" />
-		<property name="mapperLocations" value="classpath*:/mybatis/mapper/UserMapper.xml" />
+		<property name="mapperLocations" value="classpath*:/mybatis/mapper/shard0/UserMapper.xml" />
 		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
 	</bean>
 
