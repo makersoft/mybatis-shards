@@ -27,6 +27,14 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+/**
+ * deprecated!!!
+ *
+ * please use spring-data ChainedTransactionManager
+ *
+ * @see org.springframework.data.transaction.ChainedTransactionManager
+ */
+@Deprecated
 public class MultiDataSourcesTransactionManager implements PlatformTransactionManager, InitializingBean {
 	
 	private final Log log = LogFactory.getLog(getClass());
