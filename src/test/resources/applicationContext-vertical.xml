@@ -69,42 +69,40 @@
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" /> 
 	-->
 	
-	<beans profile="test">
-		<!-- 定义受环境影响易变的变量 -->
-		<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
+	<!-- 定义受环境影响易变的变量 -->
+	<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
-		<!-- Simple连接池 -->
-		<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${jdbc.driver}" />
-			<property name="url" value="${ds1.jdbc.url}" />
-			<property name="username" value="${ds1.jdbc.username}" />
-			<property name="password" value="${ds1.jdbc.password}" />
-		</bean>
+	<!-- Simple连接池 -->
+	<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="${jdbc.driver}" />
+		<property name="url" value="${ds1.jdbc.url}" />
+		<property name="username" value="${ds1.jdbc.username}" />
+		<property name="password" value="${ds1.jdbc.password}" />
+	</bean>
 
-		<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${jdbc.driver}" />
-			<property name="url" value="${ds2.jdbc.url}" />
-			<property name="username" value="${ds2.jdbc.username}" />
-			<property name="password" value="${ds2.jdbc.password}" />
-		</bean>
+	<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="${jdbc.driver}" />
+		<property name="url" value="${ds2.jdbc.url}" />
+		<property name="username" value="${ds2.jdbc.username}" />
+		<property name="password" value="${ds2.jdbc.password}" />
+	</bean>
 
-		<bean id="lazyConnectionDataSource_1"
-			class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
-			<property name="targetDataSource" ref="dataSource_1" />
-		</bean>
+	<bean id="lazyConnectionDataSource_1"
+		class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+		<property name="targetDataSource" ref="dataSource_1" />
+	</bean>
 
-		<bean id="lazyConnectionDataSource_2"
-			class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
-			<property name="targetDataSource" ref="dataSource_2" />
-		</bean>
-		
-		<!-- 初始化数据表结构 -->
-		<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
-			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
-		</jdbc:initialize-database>	
-		
-		<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
-			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
-		</jdbc:initialize-database>	
-	</beans>
+	<bean id="lazyConnectionDataSource_2"
+		class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+		<property name="targetDataSource" ref="dataSource_2" />
+	</bean>
+
+	<!-- 初始化数据表结构 -->
+	<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+		<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+	</jdbc:initialize-database>
+
+	<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
+		<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+	</jdbc:initialize-database>
 </beans>

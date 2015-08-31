@@ -18,126 +18,56 @@
 
 	<context:component-scan base-package="org.makersoft.shards"/>
 
-	<!-- Construct Map -->
-	<bean id="dsMap" class="java.util.HashMap">
-		<constructor-arg>
-			<map>
-				<entry key="0" value-ref="lazyConnectionDataSource_1" />
-				<entry key="1" value-ref="lazyConnectionDataSource_2" />
-			</map>
-		</constructor-arg>
-	</bean>
+    <!-- 定义受环境影响易变的变量 -->
+    <context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
-	<!-- shards config
-	<bean id="shardId_0" class="org.makersoft.shards.ShardId">
-		<constructor-arg>
-			<value>0</value>
-		</constructor-arg>
-	</bean>
-	
-	<bean id="shardId_1" class="org.makersoft.shards.ShardId">
-		<constructor-arg>
-			<value>1</value>
-		</constructor-arg>
-	</bean> -->
-	
-	<bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
-		<property name="shardId" value="1"/>
-<!-- 		<property name="shardIds"> -->
-<!-- 			<list> -->
-<!-- 				<ref local="shardId_0"/> -->
-<!-- 			</list> -->
-<!-- 		</property> -->
-		<property name="dataSource" ref="lazyConnectionDataSource_1" />
-		<property name="mapperLocations" value="classpath*:/mybatis/mapper/shard1/RoleMapper.xml" />
-		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
-	</bean>
-	
-	<bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
-		<property name="shardId" value="0"/>
-<!-- 		<property name="shardIds"> -->
-<!-- 			<list> -->
-<!-- 				<ref local="shardId_1"/> -->
-<!-- 			</list> -->
-<!-- 		</property> -->
-		<property name="dataSource" ref="lazyConnectionDataSource_2" />
-		<property name="mapperLocations" value="classpath*:/mybatis/mapper/shard0/UserMapper.xml" />
-		<property name="typeAliasesPackage" value="org.makersoft.shards.domain" />
-	</bean>
+    <!-- Simple连接池 -->
+    <bean id="dataSource_0" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="${jdbc.driver}" />
+        <property name="url" value="${ds1.jdbc.url}" />
+        <property name="username" value="${ds1.jdbc.username}" />
+        <property name="password" value="${ds1.jdbc.password}" />
+    </bean>
 
-	<!-- mybatis 配置 -->
-	<bean id="shardedSqlSessionFactory" class="org.makersoft.shards.spring.ShardedSqlSessionFactoryBean">
-		<property name="shardConfigurations">
-			<array>
-				<ref bean="shard_0"/>
-				<ref bean="shard_1"/>
-			</array>
-		</property>
-		<property name="shardStrategyFactory">
-			<bean class="org.makersoft.shards.strategy.internal.ReadWriteAccessShardStrategyFactory" />
-		</property>
-		<property name="idGenerator">
-			<bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator" />
-		</property>
-	</bean>
+    <bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="${jdbc.driver}" />
+        <property name="url" value="${ds2.jdbc.url}" />
+        <property name="username" value="${ds2.jdbc.username}" />
+        <property name="password" value="${ds2.jdbc.password}" />
+    </bean>
 
-	<!-- scan for mappers and let them be autowired -->
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="org.makersoft.shards.mapper" />
-		<property name="sqlSessionFactoryBeanName" value="shardedSqlSessionFactory" />
-		<property name="annotationClass" value="org.makersoft.shards.annotation.MyBatisMapper" />
-	</bean>
+    <bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="${jdbc.driver}" />
+        <property name="url" value="${ds3.jdbc.url}" />
+        <property name="username" value="${ds3.jdbc.username}" />
+        <property name="password" value="${ds3.jdbc.password}" />
+    </bean>
 
-	<!-- 事务配置 -->
-	<bean id="transactionManager" class="org.makersoft.shards.transaction.MultiDataSourcesTransactionManager">
-		<property name="dataSources">
-			<list>
-				<ref bean="lazyConnectionDataSource_1" />
-				<ref bean="lazyConnectionDataSource_2" />
-			</list>
-		</property>
-	</bean>
+    <bean id="lazyConnectionDataSource_0"
+          class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+        <property name="targetDataSource" ref="dataSource_0" />
+    </bean>
 
-	<!-- 使用annotation定义事务 
-	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" /> 
-	-->
-	
-	<beans profile="test">
-		<!-- 定义受环境影响易变的变量 -->
-		<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
+    <bean id="lazyConnectionDataSource_1"
+          class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+        <property name="targetDataSource" ref="dataSource_1" />
+    </bean>
 
-		<!-- Simple连接池 -->
-		<bean id="dataSource_1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${jdbc.driver}" />
-			<property name="url" value="${ds1.jdbc.url}" />
-			<property name="username" value="${ds1.jdbc.username}" />
-			<property name="password" value="${ds1.jdbc.password}" />
-		</bean>
+    <bean id="lazyConnectionDataSource_2"
+          class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+        <property name="targetDataSource" ref="dataSource_2" />
+    </bean>
 
-		<bean id="dataSource_2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-			<property name="driverClass" value="${jdbc.driver}" />
-			<property name="url" value="${ds2.jdbc.url}" />
-			<property name="username" value="${ds2.jdbc.username}" />
-			<property name="password" value="${ds2.jdbc.password}" />
-		</bean>
+    <!-- 初始化数据表结构 -->
+    <jdbc:initialize-database data-source="dataSource_0" ignore-failures="ALL">
+        <jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+    </jdbc:initialize-database>
 
-		<bean id="lazyConnectionDataSource_1"
-			class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
-			<property name="targetDataSource" ref="dataSource_1" />
-		</bean>
+    <jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+        <jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+    </jdbc:initialize-database>
 
-		<bean id="lazyConnectionDataSource_2"
-			class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
-			<property name="targetDataSource" ref="dataSource_2" />
-		</bean>
-		
-		<!-- 初始化数据表结构 -->
-		<jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
-			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
-		</jdbc:initialize-database>	
-		
-		<jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
-			<jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
-		</jdbc:initialize-database>	
-	</beans>
+    <jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
+        <jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql" />
+    </jdbc:initialize-database>
 </beans>
