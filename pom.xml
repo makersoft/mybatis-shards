@@ -2,13 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.makersoft</groupId>
+	<groupId>name.myc</groupId>
 	<artifactId>mybatis-shards</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
 
 	<name>mybatis-shards</name>
-	<url>http://www.makersoft.org</url>
+	<url>http://myc.name</url>
 	<description>MyBatis Shards is a framework that is designed to encapsulate and minimize this complexity by adding support for horizontal partitioning to Mybatis Core.</description>
 
 	<properties>
