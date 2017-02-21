@@ -107,8 +107,10 @@ public class ShardedSqlSessionFactoryBean implements
 				Assert.notNull(shardConfiguration.getShardId(), "shard id can not be null.");
 				Assert.notNull(shardConfiguration.getShardDataSource(), "data source can not be null.");
 
+                
 				if(shardConfiguration.getConfigLocation() == null) {
-					shardConfiguration.setConfigLocation(this.configLocation);
+					shardConfiguration.setConfigLocation(this.configLocation);  //XXX configLocation是什么?
+                    
 				}
 
 				if(shardConfiguration.getMapperLocations() == null || shardConfiguration.getMapperLocations().length == 0) {

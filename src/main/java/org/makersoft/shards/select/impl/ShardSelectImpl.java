@@ -102,7 +102,7 @@ public class ShardSelectImpl implements ShardSelect {
 
 		ShardOperation<Object> shardOp = new ShardOperation<Object>() {
 			public Object execute(SqlSession session, ShardId shardId) {
-				
+				//XXX 这里只是将分区加入到了脚本中,只能用于分表,不能进行分库.
 				return session.selectOne(selectFactory.getStatement(),
 						ParameterUtil.resolve(selectFactory.getParameter(), shardId));
 			}
