@@ -48,7 +48,7 @@
             </array>
         </property>
         <property name="shardStrategyFactory">
-            <bean class="org.makersoft.shards.strategy.HorizontalShardStrategyFactory"/>
+            <bean class="cn.easyxue.mybatis.shards.CompanyShardStrategyFactory"/>
         </property>
         <property name="idGenerator">
             <bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"/>

@@ -157,9 +157,11 @@ public abstract class ParameterUtil {
 			Class<?> clazz = object.getClass();
 			Field[] first = clazz.getDeclaredFields();
 			Field[] second = clazz.getSuperclass().getDeclaredFields();
-			
-			Field[] fields = Arrays.copyOf(first, first.length + second.length);
+			Field[] third = clazz.getSuperclass().getSuperclass().getDeclaredFields();
+			//FIXME 只支持到两级父类,不能支持无限级.
+			Field[] fields = Arrays.copyOf(first, first.length + second.length + third.length);
 			System.arraycopy(second, 0, fields, first.length, second.length);
+			System.arraycopy(third, 0, fields, first.length + second.length, third.length);
 
 			for (Field field : fields) {
 				field.setAccessible(true);
