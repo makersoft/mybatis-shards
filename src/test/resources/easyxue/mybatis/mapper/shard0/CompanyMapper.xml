@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.easyxue.mybatis.shards.mapper.CompanyMapper">
+	
+	<select id="getById" parameterType="string" resultType="cn.easyxue.mybatis.shards.domain.shard0.Company">
+		SELECT * FROM easyxue_company WHERE id = #{id}
+	</select>
+	
+	<select id="findAll" resultType="cn.easyxue.mybatis.shards.domain.shard0.Company">
+		SELECT * FROM ${prefix}easyxue_company${suffix}
+	</select>
+	
+<!--	<select id="findByGender" resultType="cn.easyxue.mybatis.shards.domain.shard0.Company">
+		SELECT * FROM ${prefix}easyxue_company${suffix} where gender=#{gender}
+	</select>-->
+	
+	<select id="getAllCount" resultType="int">
+		SELECT count(*) FROM ${prefix}easyxue_company${suffix}
+	</select>
+
+	<insert id="insertCompany" parameterType="cn.easyxue.mybatis.shards.domain.shard0.Company">
+		INSERT INTO ${prefix}easyxue_company${suffix} 
+			(id, name, dbkey, creatorId) 
+		VALUES
+			(#{id}, #{name}, #{creatorId}, #{dbKey})
+	</insert>
+	
+	<delete id="deleteAll">
+		DELETE FROM ${prefix}easyxue_company${suffix}
+	</delete>
+	
+	<delete id="deleteById">
+		DELETE FROM ${prefix}easyxue_company${suffix} where id = #{id}
+	</delete>
+	
+<!--	<update id="udpateCompany" parameterType="cn.easyxue.mybatis.shards.domain.shard0.Company">
+		UPDATE ${prefix}easyxue_company${suffix} SET
+		password = #{password}
+	</update>-->
+
+	<update id="updateById" parameterType="cn.easyxue.mybatis.shards.domain.shard0.Company">
+		UPDATE ${prefix}easyxue_company${suffix} SET
+		name = #{username}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
