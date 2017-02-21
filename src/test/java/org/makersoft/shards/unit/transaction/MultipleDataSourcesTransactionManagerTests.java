@@ -34,10 +34,10 @@ public class MultipleDataSourcesTransactionManagerTests {
 	@Rollback
 	public void test_transaction_commit_and_rollback() throws Exception{
 
-		int affectedrows = jdbcTemplate_1.update("insert into maker_shards_user (id,username,password,age,gender) values (1,'makersoft','makersoft',23,1)");
+		int affectedrows = jdbcTemplate_1.update("insert into maker_shards_user (id,username,password,age,gender) values ('1','makersoft','makersoft',23,1)");
 		Assert.assertEquals(affectedrows, 1);
 
-		affectedrows = jdbcTemplate_2.update("insert into maker_shards_user (id,username,password,age,gender) values (1,'makersoft','makersoft',22,0)");
+		affectedrows = jdbcTemplate_2.update("insert into maker_shards_user (id,username,password,age,gender) values ('1','makersoft','makersoft',22,0)");
 		Assert.assertEquals(affectedrows, 1);
 
 	}
