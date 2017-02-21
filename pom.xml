@@ -7,7 +7,7 @@
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
 
-	<name>mybatis-shards</name>
+	<name>mybatis-shards(myc°æ)</name>
 	<url>http://myc.name</url>
 	<description>MyBatis Shards is a framework that is designed to encapsulate and minimize this complexity by adding support for horizontal partitioning to Mybatis Core.</description>
 
