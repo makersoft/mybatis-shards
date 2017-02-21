@@ -5,43 +5,43 @@
 <mapper namespace="cn.easyxue.mybatis.shards.mapper.UserMapper">
 	
 	<select id="getById" parameterType="string" resultType="cn.easyxue.mybatis.shards.domain.shard0.User">
-		SELECT * FROM maker_shards_user WHERE id = #{id}
+		SELECT * FROM easyxue_user WHERE id = #{id}
 	</select>
 	
 	<select id="findAll" resultType="cn.easyxue.mybatis.shards.domain.shard0.User">
-		SELECT * FROM ${prefix}maker_shards_user${suffix}
+		SELECT * FROM ${prefix}easyxue_user${suffix}
 	</select>
 	
 	<select id="findByGender" resultType="cn.easyxue.mybatis.shards.domain.shard0.User">
-		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender}
+		SELECT * FROM ${prefix}easyxue_user${suffix} where gender=#{gender}
 	</select>
 	
 	<select id="getAllCount" resultType="int">
-		SELECT count(*) FROM ${prefix}maker_shards_user${suffix}
+		SELECT count(*) FROM ${prefix}easyxue_user${suffix}
 	</select>
 
 	<insert id="insertUser" parameterType="cn.easyxue.mybatis.shards.domain.shard0.User">
-		INSERT INTO ${prefix}maker_shards_user${suffix} 
+		INSERT INTO ${prefix}easyxue_user${suffix} 
 			(id, username, password, age, gender) 
 		VALUES
 			(#{id}, #{username}, #{password}, #{age}, #{gender})
 	</insert>
 	
 	<delete id="deleteAll">
-		DELETE FROM ${prefix}maker_shards_user${suffix}
+		DELETE FROM ${prefix}easyxue_user${suffix}
 	</delete>
 	
 	<delete id="deleteById">
-		DELETE FROM ${prefix}maker_shards_user${suffix} where id = #{id}
+		DELETE FROM ${prefix}easyxue_user${suffix} where id = #{id}
 	</delete>
 	
 	<update id="udpateUser" parameterType="cn.easyxue.mybatis.shards.domain.shard0.User">
-		UPDATE ${prefix}maker_shards_user${suffix} SET
+		UPDATE ${prefix}easyxue_user${suffix} SET
 		password = #{password}
 	</update>
 
 	<update id="updateById" parameterType="cn.easyxue.mybatis.shards.domain.shard0.User">
-		UPDATE ${prefix}maker_shards_user${suffix} SET
+		UPDATE ${prefix}easyxue_user${suffix} SET
 		username = #{username},
 		password = #{password}
 		WHERE id = #{id}
