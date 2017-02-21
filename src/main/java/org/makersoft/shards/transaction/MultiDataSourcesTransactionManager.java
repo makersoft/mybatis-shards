@@ -128,6 +128,7 @@ public class MultiDataSourcesTransactionManager implements PlatformTransactionMa
 
 		Throwable ex = null;
 //		Collections.reverse(dataSources);
+        //FIXME 这里不是按提交的顺序,而是按数据源的顺序.可能会有问题.
 		for (int i = dataSources.size() - 1; i >= 0; i--) {
 			DataSource dataSource = dataSources.get(i);
 			try {
