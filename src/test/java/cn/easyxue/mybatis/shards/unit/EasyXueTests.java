@@ -35,7 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @author MaYichao
  */
 @ContextConfiguration(locations = {"classpath:applicationContext-easyxue.xml"})
-public class EasyXueTest extends BaseIntegrationTest {
+public class EasyXueTests extends BaseIntegrationTest {
 
     @Autowired
     UserMapper userMapper;
