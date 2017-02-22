@@ -14,11 +14,18 @@ import cn.easyxue.mybatis.shards.domain.shard1.Employee;
 import cn.easyxue.mybatis.shards.mapper.CompanyMapper;
 import cn.easyxue.mybatis.shards.mapper.EmployeeMapper;
 import cn.easyxue.mybatis.shards.mapper.UserMapper;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import static org.junit.Assert.*;
 import org.makersoft.shards.integration.BaseIntegrationTest;
+import org.makersoft.shards.spring.ShardedSqlSessionFactoryBean;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -37,8 +44,23 @@ public class EasyXueTest extends BaseIntegrationTest {
     @Autowired
     EmployeeMapper employeeMapper;
 
+    @Autowired
+    @Qualifier("jdbcTemplate_1")
+    JdbcTemplate jdbc1;
+
+    @Autowired
+    @Qualifier("jdbcTemplate_2")
+    JdbcTemplate jdbc2;
+
+    @Autowired
+    @Qualifier("jdbcTemplate_3")
+    JdbcTemplate jdbc3;
+
+    @Autowired
+    ShardedSqlSessionFactoryBean factoryBean;
+
     @Test
-    @Transactional
+//    @Transactional
     public void testNewCompany() {
         //注解自动开启事务
 
@@ -53,12 +75,26 @@ public class EasyXueTest extends BaseIntegrationTest {
         System.out.println("创建企业成功:" + stark.getId());
 //        //创建企业分区表
         buildCompany(stark);
+        JdbcTemplate jdbc = getJdbcTemplate(Integer.parseInt(stark.getDbKey()));
+        List<Employee> ems = jdbc.query("select * from t_" + stark.getId() + "_employee", new RowMapper<Employee>() {
+
+            @Override
+            public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Employee em = new Employee(null, null);
+                em.setComId(rs.getString("comId"));
+                em.setId(rs.getString("id"));
+                em.setUserId(rs.getString("userId"));
+                return em;
+            }
+
+        });
+        assertNotNull("创建企业表失败", ems);
+
 //        //添加第一个员工
-        Employee empToni = addEmployee(stark,toni);
+        Employee empToni = addEmployee(stark, toni);
         assertNotNull("员工创建失败.", empToni.getId());
         System.out.println("创建员工成功:" + empToni.getId());
-        
-        
+
     }
 
     /**
@@ -69,6 +105,7 @@ public class EasyXueTest extends BaseIntegrationTest {
      * @param password
      * @return
      */
+    @Transactional
     private User insertNewUser(String name, int sex, String password) {
         User user = new User(name, password, sex);
         int c = userMapper.insertUser(user);
@@ -82,23 +119,47 @@ public class EasyXueTest extends BaseIntegrationTest {
      * @param creator 创建人
      * @return
      */
+    @Transactional
     private Company insertCompany(String name, User creator) {
         Company comp = new Company(name, creator.getId());
-        comp.setDbKey("shard_2");
+
+        comp.setDbKey("2");
         companyMapper.insertCompany(comp);
         return comp;
     }
 
+    @Transactional
     private void buildCompany(Company stark) {
-        //分区.
-        
+        //取得分区.
+//        shardStrategyFactory.newShardStrategy(null)
+
+        Company c = new Company();
+        c.setId(stark.getId());
+        c.setDbKey(stark.getDbKey());
+        Employee param = new Employee();
+        param.setCompany(stark);
+
         employeeMapper.createTable(stark);
     }
 
+    @Transactional
     private Employee addEmployee(Company stark, User toni) {
-        Employee employee = new Employee(stark,toni);
+        Employee employee = new Employee(stark, toni);
         employeeMapper.insert(employee);
         return employee;
+    }
+
+    private JdbcTemplate getJdbcTemplate(int dbKey) {
+        switch (dbKey) {
+            case 1:
+                return jdbc1;
+            case 2:
+                return jdbc2;
+            case 3:
+                return jdbc3;
+            default:
+                throw new AssertionError();
+        }
     }
 
 }

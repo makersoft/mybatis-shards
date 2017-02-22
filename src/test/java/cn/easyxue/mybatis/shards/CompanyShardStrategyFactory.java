@@ -17,8 +17,11 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.ibatis.session.RowBounds;
+import org.apache.log4j.Logger;
 import org.makersoft.shards.ShardId;
 import org.makersoft.shards.domain.shard0.User;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
@@ -34,6 +37,8 @@ import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
  * 根据企业水平切分策略.
  */
 public class CompanyShardStrategyFactory implements ShardStrategyFactory {
+
+    private static Logger log = Logger.getLogger(CompanyShardStrategyFactory.class);
 
     @Override
     public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
@@ -60,18 +65,25 @@ public class CompanyShardStrategyFactory implements ShardStrategyFactory {
             public ShardId selectShardIdForNewObject(String statement, Object obj) {
                 if (obj instanceof CompanyEntity) {
                     CompanyEntity comp = (CompanyEntity) obj;
-                    
+
                     ShardId si = this.determineShardId(comp.getCompany().getDbKey());
+                    if (log.isDebugEnabled()) {
+                        log.debug(String.format("Switch to db(%s) with param dbkey(%3$s) , sql(%2$s).", si.toString(), statement, comp.getCompany().getDbKey()));
+                    }
                     comp.setShardId(si);
                     return si;
                 } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug(String.format("Switch to default db with param sql(%1$s).",  statement));
+                    }
                     return null;
                 }
             }
 
             private ShardId determineShardId(String dbKey) {
                 //根据dbKey对应到数据源.
-                int id = Integer.parseInt(dbKey.substring(6));
+                assert dbKey != null : "数据源怎么能是空的呢?";
+                int id = Integer.parseInt(dbKey);
                 for (ShardId shardId : shardIds) {
                     if (shardId.getId() == id) {
                         return shardId;
