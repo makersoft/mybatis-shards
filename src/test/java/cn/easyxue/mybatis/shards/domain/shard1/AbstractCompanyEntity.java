@@ -21,14 +21,12 @@ import org.makersoft.shards.ShardId;
 
 /**
  * 企业对象基类.
+ *
  * @author MaYichao
  */
 public abstract class AbstractCompanyEntity extends AbstractShardEntity implements CompanyEntity {
+
     protected Company company;
-    /**
-     * 分区与分表信息.
-     */
-    private ShardId shardId;
 
     public AbstractCompanyEntity() {
     }
@@ -43,6 +41,7 @@ public abstract class AbstractCompanyEntity extends AbstractShardEntity implemen
 
     /**
      * 分区与分表信息.
+     *
      * @return the shardId
      */
     public ShardId getShardId() {
@@ -51,6 +50,7 @@ public abstract class AbstractCompanyEntity extends AbstractShardEntity implemen
 
     /**
      * 分区与分表信息.
+     *
      * @param shardId the shardId to set
      */
     public void setShardId(ShardId shardId) {
@@ -62,6 +62,9 @@ public abstract class AbstractCompanyEntity extends AbstractShardEntity implemen
      */
     public void setCompany(Company company) {
         this.company = company;
+        assert company != null && company.getDbKey() != null : "企业对象不能为空.";
+        
+        ShardId si = new ShardId(Integer.parseInt(company.getDbKey()));
     }
-    
+
 }

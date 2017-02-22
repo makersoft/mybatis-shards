@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Makersoft.
+ * Copyright 2017 MaYichao.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.easyxue.mybatis.shards.domain.shard1;
+package org.makersoft.shards;
 
-import org.makersoft.shards.ShardedEntity;
-import cn.easyxue.mybatis.shards.domain.shard0.Company;
 import org.makersoft.shards.ShardId;
 
 /**
- *
+ * 分区存储对象.
  * @author MaYichao
  */
-public interface CompanyEntity extends ShardedEntity {
-
-    /**
-     * @return the company
-     */
-    Company getCompany();
+public interface ShardedEntity {
 
     /**
      * 分区与分表信息.
-     *
-     * @param shardId the shardId to set
+     * @return the shardId
      */
-    void setShardId(ShardId shardId);
-
+    ShardId getShardId();
+    
 }

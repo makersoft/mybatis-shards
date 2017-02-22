@@ -34,6 +34,9 @@ public class Employee extends AbstractCompanyEntity {
      */
     private String userId;
 
+    public Employee() {
+    }
+
     public Employee(Company company, User user) {
         this.company = company;
         comId = company.getId();
