@@ -8,12 +8,12 @@
  */
 package cn.easyxue.mybatis.shards.domain.shard0;
 
-import cn.easyxue.mybatis.shards.domain.AbstractShardEntity;
+import cn.easyxue.mybatis.shards.domain.AbstractEntity;
 
 /**
  * User domain for test.
  */
-public class User extends AbstractShardEntity {
+public class User extends AbstractEntity {
 
 	private static final long serialVersionUID = -2426776467504642746L;
 
