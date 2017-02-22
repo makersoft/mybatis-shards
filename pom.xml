@@ -158,12 +158,12 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
+<!--		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.12</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 
 		<!-- h2 -->
 		<dependency>
@@ -224,6 +224,12 @@
 	  <version>1.8.5.RELEASE</version>
 	  <scope>test</scope>
 	 </dependency>
+	 <dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-log4j12</artifactId>
+	  <version>1.7.7</version>
+	  <scope>test</scope>
+	 </dependency>
 	</dependencies>
 
 	<licenses>
@@ -234,8 +240,8 @@
 	</licenses>
 
 	<organization>
-		<name>Makersoft</name>
-		<url>http://www.makersoft.org</url>
+		<name>MaYichao</name>
+		<url>http://myc.name</url>
 	</organization>
 
 	<developers>
@@ -243,6 +249,11 @@
 			<id>fengkuok</id>
 			<name>Feng Kuok</name>
 			<email>fengkuok@makersoft.org</email>
+		</developer>
+		<developer>
+			<id>myc</id>
+			<name>Ma Yichao</name>
+			<email>mycsoft@qq.com</email>
 		</developer>
 	</developers>
 
