@@ -13,7 +13,7 @@
 	</select>
 	
 	<select id="findByGender" resultType="org.makersoft.shards.domain.shard0.User">
-		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender};
+		SELECT * FROM ${prefix}maker_shards_user${suffix} where gender=#{gender}
 	</select>
 	
 	<select id="getAllCount" resultType="int">

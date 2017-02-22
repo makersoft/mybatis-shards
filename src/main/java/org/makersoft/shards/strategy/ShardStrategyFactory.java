@@ -17,5 +17,11 @@ import org.makersoft.shards.ShardId;
  */
 public interface ShardStrategyFactory {
 
+    /**
+     * 创建一个新的策略.
+     * 
+     * @param shardIds
+     * @return 
+     */
 	ShardStrategy newShardStrategy(List<ShardId> shardIds);
 }

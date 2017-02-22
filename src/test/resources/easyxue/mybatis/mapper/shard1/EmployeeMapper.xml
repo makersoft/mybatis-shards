@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.easyxue.mybatis.shards.mapper.EmployeeMapper">
+
+    <update id="createTable">
+        create table t_${company.id}_employee (
+        id varchar(32)  NOT NULL,
+        userId varchar(32) NOT null,
+        PRIMARY KEY (id)
+        )
+    </update>
+<!--    
+    <select id="getById" parameterType="long" resultType="org.makersoft.shards.domain.shard1.Role">
+        SELECT * FROM maker_shards_role WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="org.makersoft.shards.domain.shard1.Role">
+        SELECT * FROM maker_shards_role
+    </select>
+
+    <update id="update" parameterType="org.makersoft.shards.domain.shard1.Role">
+        UPDATE ACCOUNT SET
+        EMAIL = #{email},
+        FIRSTNAME = #{firstName},
+        LASTNAME = #{lastName},
+        STATUS = #{status},
+        ADDR1 = #{address1},
+        ADDR2 = #{address2,jdbcType=VARCHAR},
+        CITY = #{city},
+        STATE = #{state},
+        ZIP = #{zip},
+        COUNTRY = #{country},
+        PHONE = #{phone}
+        WHERE USERID = #{username}
+    </update>-->
+
+    <insert id="insert" >
+        INSERT INTO t_${company.id}_employee (id,userId) VALUES (#{id}, #{userId})
+    </insert>
+
+</mapper>

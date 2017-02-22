@@ -17,7 +17,7 @@ import org.mybatis.spring.support.SqlSessionDaoSupport;
  * 
  */
 public abstract class ShardedSqlSessionDaoSupport<T,PK extends Serializable> extends SqlSessionDaoSupport {
-	
+	//XXX 为什么没有子类?
 	protected final Class<T> entityClass;
 	
 	protected final String selectOneStatement;

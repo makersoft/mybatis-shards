@@ -42,6 +42,7 @@ public class ShardedSqlSessionFactoryBean implements
 
 	private Resource[] mapperLocations;
 
+    /** 分区源配置表. 其中key为数据库id. */
 	private Map<Integer, DataSource> dataSources;
 	
 	private Properties configurationProperties;
@@ -76,8 +77,10 @@ public class ShardedSqlSessionFactoryBean implements
 		List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
 		
 		if(CollectionUtils.isEmpty(shardConfigurations)){
+            //分区配置为空,就是没有配置任何分区.
+            //根据数据源配置初始化分区.
 			for(Map.Entry<Integer, DataSource> entry : dataSources.entrySet()){
-				int shardId = entry.getKey();	//虚拟分区ID
+                int shardId = entry.getKey();	//虚拟分区ID.
 				DataSource dataSource = entry.getValue();	//虚拟分区所属数据源
 				
 				SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
@@ -97,13 +100,17 @@ public class ShardedSqlSessionFactoryBean implements
 				shardConfigs.add(new ShardConfigurationImpl(shardId, dataSource, sessionFacotry));
 			}
 		}else {
+            //XXX 这里如何解决动态添加数据源的问题?
+            //分区已经初始化完成.
 			for(ShardConfigurationImpl shardConfiguration : shardConfigurations){
 				
 				Assert.notNull(shardConfiguration.getShardId(), "shard id can not be null.");
 				Assert.notNull(shardConfiguration.getShardDataSource(), "data source can not be null.");
 
+                
 				if(shardConfiguration.getConfigLocation() == null) {
-					shardConfiguration.setConfigLocation(this.configLocation);
+					shardConfiguration.setConfigLocation(this.configLocation);  //XXX configLocation是什么?
+                    
 				}
 
 				if(shardConfiguration.getMapperLocations() == null || shardConfiguration.getMapperLocations().length == 0) {

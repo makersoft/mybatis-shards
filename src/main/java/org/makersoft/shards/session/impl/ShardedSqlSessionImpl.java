@@ -19,8 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.executor.BatchResult;
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.*;
@@ -32,6 +30,7 @@ import org.makersoft.shards.id.IdGenerator;
 import org.makersoft.shards.select.impl.AdHocSelectFactoryImpl;
 import org.makersoft.shards.select.impl.ShardSelectImpl;
 import org.makersoft.shards.session.ShardIdResolver;
+import org.makersoft.shards.ShardedEntity;
 import org.makersoft.shards.session.ShardedSqlSession;
 import org.makersoft.shards.session.ShardedSqlSessionFactory;
 import org.makersoft.shards.strategy.ShardStrategy;
@@ -50,9 +49,9 @@ import org.makersoft.shards.utils.Sets;
  */
 public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver {
 
-	private final Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ShardedSqlSessionImpl.class);
 
-	private static ThreadLocal<ShardId> currentSubgraphShardId = new ThreadLocal<ShardId>();
+	private static final ThreadLocal<ShardId> currentSubgraphShardId = new ThreadLocal<ShardId>();
 
 	private final ShardedSqlSessionFactory shardedSqlSessionFactory;
 
@@ -212,8 +211,9 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 
 	List<ShardId> selectShardIdsFromShardResolutionStrategyData(ShardResolutionStrategyData srsd) {
 		IdGenerator idGenerator = shardedSqlSessionFactory.getIdGenerator();
+        //FIXME 当企业建表语句走到这里时,由于企业信息存在,所以会视为已经存在的对象,自动转到主分区中.
 		if ((idGenerator != null) && (srsd.getId() != null)) {
-			//
+			//当id创建器不为空,且数据查询分区策略也存在,则直接使用id创建器解析分区id,取得分区信息.
 			return Collections.singletonList(idGenerator.extractShardId(srsd.getId()));
 		}
 		return shardStrategy.getShardResolutionStrategy()
@@ -429,6 +429,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 	 */
 	private List<Shard> determineShardsObjectsViaResolutionStrategy(String statement,
 			Object parameter, Serializable id) {
+        //TODO 当企业建表请求到这里,如何可以将对应的分区id写入到分区策略中?
 		ShardResolutionStrategyData srsd = new ShardResolutionStrategyDataImpl(statement,
 				parameter, id);
 		List<ShardId> shardIds = this.selectShardIdsFromShardResolutionStrategyData(srsd);
@@ -443,7 +444,14 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 			if (obj instanceof String || obj instanceof Number) {
 				// 当参数为Number/String类型时是否可以认为是主键？
 				return (Serializable) obj;
-			}
+			}else if(obj instanceof ShardedEntity){
+                ShardId si = ((ShardedEntity)obj).getShardId();
+                if (si != null) {
+                    return si.getId();
+                }else{
+                    return null;
+                }
+            }
 
 			return ParameterUtil.extractPrimaryKey(obj);
 		}
@@ -587,6 +595,12 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 	}
 
 	public static void setCurrentSubgraphShardId(ShardId shardId) {
+        assert shardId != null : "分区变成空的了";
+        if (log.isDebugEnabled()) {
+            if (currentSubgraphShardId.get() != shardId) {
+                log.debug(String.format("Db switch from db[%d] to db[%d].", currentSubgraphShardId.get().getId(),shardId.getId()));
+            }
+        }
 		currentSubgraphShardId.set(shardId);
 	}
 
