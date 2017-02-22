@@ -8,6 +8,7 @@
  */
 package cn.easyxue.mybatis.shards.unit;
 
+import cn.easyxue.mybatis.shards.CompanyShardStrategyFactory;
 import cn.easyxue.mybatis.shards.domain.shard0.Company;
 import cn.easyxue.mybatis.shards.domain.shard0.User;
 import cn.easyxue.mybatis.shards.domain.shard1.Employee;
@@ -45,6 +46,9 @@ public class EasyXueTest extends BaseIntegrationTest {
     EmployeeMapper employeeMapper;
 
     @Autowired
+    @Qualifier("jdbcTemplate_0")
+    JdbcTemplate jdbc0;
+    @Autowired
     @Qualifier("jdbcTemplate_1")
     JdbcTemplate jdbc1;
 
@@ -59,18 +63,28 @@ public class EasyXueTest extends BaseIntegrationTest {
     @Autowired
     ShardedSqlSessionFactoryBean factoryBean;
 
+    @Autowired
+    CompanyShardStrategyFactory ssf;
+
     @Test
 //    @Transactional
     public void testNewCompany() {
-        //注解自动开启事务
-
         //注册一个新用户
         User toni = insertNewUser("托尼", User.SEX_MALE, "123456");
         assertNotNull("用户创建失败.", toni.getId());
         System.out.println("创建用户成功:" + toni.getId());
 
+        testNewCompany(101,toni);
+        testNewCompany(102,toni);
+        testNewCompany(103,toni);
+    }
+
+    @Transactional
+    public void testNewCompany(int shardId,User creator) {
+
+        //注解自动开启事务
 //        //注册一个新企业
-        Company stark = insertCompany("Start工业", toni);
+        Company stark = insertCompany("Start工业", creator,shardId);
         assertNotNull("用户创建失败.", stark.getId());
         System.out.println("创建企业成功:" + stark.getId());
 //        //创建企业分区表
@@ -91,7 +105,7 @@ public class EasyXueTest extends BaseIntegrationTest {
         assertNotNull("创建企业表失败", ems);
 
 //        //添加第一个员工
-        Employee empToni = addEmployee(stark, toni);
+        Employee empToni = addEmployee(stark, creator);
         assertNotNull("员工创建失败.", empToni.getId());
         System.out.println("创建员工成功:" + empToni.getId());
 
@@ -120,10 +134,11 @@ public class EasyXueTest extends BaseIntegrationTest {
      * @return
      */
     @Transactional
-    private Company insertCompany(String name, User creator) {
+    private Company insertCompany(String name, User creator,int shardId) {
         Company comp = new Company(name, creator.getId());
 
-        comp.setDbKey("2");
+//        comp.setDbKey(String.valueOf(ssf.getDefaultShardId()));
+        comp.setDbKey(String.valueOf(shardId));
         companyMapper.insertCompany(comp);
         return comp;
     }
@@ -133,13 +148,13 @@ public class EasyXueTest extends BaseIntegrationTest {
         //取得分区.
 //        shardStrategyFactory.newShardStrategy(null)
 
-        Company c = new Company();
-        c.setId(stark.getId());
-        c.setDbKey(stark.getDbKey());
+//        Company c = new Company();
+//        c.setId(stark.getId());
+//        c.setDbKey(stark.getDbKey());
         Employee param = new Employee();
         param.setCompany(stark);
 
-        employeeMapper.createTable(stark);
+        employeeMapper.createTable(param);
     }
 
     @Transactional
@@ -151,14 +166,14 @@ public class EasyXueTest extends BaseIntegrationTest {
 
     private JdbcTemplate getJdbcTemplate(int dbKey) {
         switch (dbKey) {
-            case 1:
+            case 101:
                 return jdbc1;
-            case 2:
+            case 102:
                 return jdbc2;
-            case 3:
+            case 103:
                 return jdbc3;
             default:
-                throw new AssertionError();
+                return jdbc0;
         }
     }
 

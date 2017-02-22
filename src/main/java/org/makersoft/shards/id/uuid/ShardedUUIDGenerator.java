@@ -46,6 +46,10 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements
 
 	@Override
 	public ShardId extractShardId(Serializable identifier) {
+        //如果是整型直接定位分区.
+        if (identifier instanceof Integer) {
+            return new ShardId((Integer)identifier);
+        }
 		String hexId = (String) identifier;
 		return new ShardId(Integer.decode("0x" + hexId.substring(0, 4)));
 	}

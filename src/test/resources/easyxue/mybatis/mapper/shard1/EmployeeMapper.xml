@@ -5,7 +5,7 @@
 <mapper namespace="cn.easyxue.mybatis.shards.mapper.EmployeeMapper">
 
     <update id="createTable">
-        create table t_${id}_employee (
+        create table t_${company.id}_employee (
         id varchar(32)  NOT NULL,
         userId varchar(32) NOT null,
         PRIMARY KEY (id)

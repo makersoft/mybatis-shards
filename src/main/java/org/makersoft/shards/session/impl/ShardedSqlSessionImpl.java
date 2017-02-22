@@ -49,9 +49,9 @@ import org.makersoft.shards.utils.Sets;
  */
 public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver {
 
-	private final Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ShardedSqlSessionImpl.class);
 
-	private static ThreadLocal<ShardId> currentSubgraphShardId = new ThreadLocal<ShardId>();
+	private static final ThreadLocal<ShardId> currentSubgraphShardId = new ThreadLocal<ShardId>();
 
 	private final ShardedSqlSessionFactory shardedSqlSessionFactory;
 
@@ -595,6 +595,12 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 	}
 
 	public static void setCurrentSubgraphShardId(ShardId shardId) {
+        assert shardId != null : "分区变成空的了";
+        if (log.isDebugEnabled()) {
+            if (currentSubgraphShardId.get() != shardId) {
+                log.debug(String.format("Db switch from db[%d] to db[%d].", currentSubgraphShardId.get().getId(),shardId.getId()));
+            }
+        }
 		currentSubgraphShardId.set(shardId);
 	}
 

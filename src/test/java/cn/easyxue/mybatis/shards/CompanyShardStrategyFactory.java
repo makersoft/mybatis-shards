@@ -17,13 +17,10 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.ibatis.session.RowBounds;
 import org.apache.log4j.Logger;
 import org.makersoft.shards.ShardId;
-import org.makersoft.shards.domain.shard0.User;
 import org.makersoft.shards.strategy.access.ShardAccessStrategy;
 import org.makersoft.shards.strategy.access.impl.ParallelShardAccessStrategy;
 import org.makersoft.shards.strategy.exit.impl.RowCountExitOperation;
@@ -38,7 +35,15 @@ import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
  */
 public class CompanyShardStrategyFactory implements ShardStrategyFactory {
 
-    private static Logger log = Logger.getLogger(CompanyShardStrategyFactory.class);
+    private static final Logger log = Logger.getLogger(CompanyShardStrategyFactory.class);
+    /**
+     * 主分区
+     */
+    private int mainId;
+    /**
+     * 默认子分区. 主要用于企业创建时的分区选择.
+     */
+    private int defaultShardId;
 
     @Override
     public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
@@ -64,36 +69,45 @@ public class CompanyShardStrategyFactory implements ShardStrategyFactory {
             @Override
             public ShardId selectShardIdForNewObject(String statement, Object obj) {
                 if (obj instanceof CompanyEntity) {
-                    CompanyEntity comp = (CompanyEntity) obj;
+                    CompanyEntity comEty = (CompanyEntity) obj;
 
-                    ShardId si = this.determineShardId(comp.getCompany().getDbKey());
+                    ShardId si = determineShardId(comEty.getCompany().getDbKey(), shardIds);
                     if (log.isDebugEnabled()) {
-                        log.debug(String.format("Switch to db(%s) with param dbkey(%3$s) , sql(%2$s).", si.toString(), statement, comp.getCompany().getDbKey()));
+                        log.debug(String.format("Switch to db(%s) with param dbkey(%3$s) , sql(%2$s).", si.toString(), statement, comEty.getCompany().getDbKey()));
                     }
-                    comp.setShardId(si);
+                    comEty.setShardId(si);
                     return si;
                 } else {
                     if (log.isDebugEnabled()) {
-                        log.debug(String.format("Switch to default db with param sql(%1$s).",  statement));
+                        log.debug(String.format("Switch to default db with param sql(%1$s).", statement));
                     }
-                    return null;
+                    return ShardId.findByShardId(shardIds, mainId);
                 }
-            }
-
-            private ShardId determineShardId(String dbKey) {
-                //根据dbKey对应到数据源.
-                assert dbKey != null : "数据源怎么能是空的呢?";
-                int id = Integer.parseInt(dbKey);
-                for (ShardId shardId : shardIds) {
-                    if (shardId.getId() == id) {
-                        return shardId;
-                    }
-                }
-
-                return null;
             }
 
         };
+    }
+
+    private ShardId determineShardId(String dbKey, List<ShardId> shardIds) {
+        //根据dbKey对应到数据源.
+        assert dbKey != null : "数据源怎么能是空的呢?";
+
+        int id = Integer.parseInt(dbKey);
+        return determineShardId(id, shardIds);
+    }
+
+    private ShardId determineShardId(int id, List<ShardId> shardIds) {
+
+        assert shardIds != null : "没有数据源怎么玩?";
+
+        //根据dbKey对应到数据源.
+        for (ShardId shardId : shardIds) {
+            if (shardId.getId() == id) {
+                return shardId;
+            }
+        }
+
+        return null;
     }
 
     private ShardResolutionStrategy getShardResolutionStrategy(final List<ShardId> shardIds) {
@@ -105,17 +119,12 @@ public class CompanyShardStrategyFactory implements ShardStrategyFactory {
                 String statement = shardResolutionStrategyData.getStatement();
                 Object parameter = shardResolutionStrategyData.getParameter();
 //				Serializable id = shardResolutionStrategyData.getId();
-
-                //自定义规则...
-                if (statement.endsWith("findByGender")) {
-                    if (((Integer) parameter) == User.SEX_MALE) {
-                        return Collections.singletonList(ShardId.findByShardId(shardIds, 0));
-                    } else {
-                        return Collections.singletonList(ShardId.findByShardId(shardIds, 1));
-                    }
+                int id = getMainId();
+                if (parameter instanceof CompanyEntity) {
+                    id = ((CompanyEntity) parameter).getShardId().getId();
                 }
+                return Collections.singletonList(ShardId.findByShardId(shardIds, id));
 
-                return super.getShardIds();
             }
         };
     }
@@ -151,6 +160,42 @@ public class CompanyShardStrategyFactory implements ShardStrategyFactory {
                 return values;
             }
         };
+    }
+
+    /**
+     * 主分区
+     *
+     * @return the mainId
+     */
+    public int getMainId() {
+        return mainId;
+    }
+
+    /**
+     * 主分区
+     *
+     * @param mainId the mainId to set
+     */
+    public void setMainId(int mainId) {
+        this.mainId = mainId;
+    }
+
+    /**
+     * 默认子分区. 主要用于企业创建时的分区选择.
+     *
+     * @return the defaultShardId
+     */
+    public int getDefaultShardId() {
+        return defaultShardId;
+    }
+
+    /**
+     * 默认子分区. 主要用于企业创建时的分区选择.
+     *
+     * @param defaultShardId the defaultShardId to set
+     */
+    public void setDefaultShardId(int defaultShardId) {
+        this.defaultShardId = defaultShardId;
     }
 
 }

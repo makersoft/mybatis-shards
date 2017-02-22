@@ -65,6 +65,7 @@ public abstract class AbstractCompanyEntity extends AbstractShardEntity implemen
         assert company != null && company.getDbKey() != null : "企业对象不能为空.";
         
         ShardId si = new ShardId(Integer.parseInt(company.getDbKey()));
+        setShardId(si);
     }
 
 }

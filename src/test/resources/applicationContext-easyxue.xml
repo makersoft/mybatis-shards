@@ -20,18 +20,22 @@
 
 
     <!-- shard dataSource config -->
-    <bean id="shard_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
+    <bean id="plat_0" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
         <property name="shardId" value="0"/>
-        <property name="dataSource" ref="lazyConnectionDataSource_1" />
+        <property name="dataSource" ref="lazyConnectionDataSource_h2" />
     </bean>
 
     <bean id="shard_1" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
-        <property name="shardId" value="1"/>
-        <property name="dataSource" ref="lazyConnectionDataSource_2" />
+        <property name="shardId" value="101"/>
+        <property name="dataSource" ref="lazyConnectionDataSource_1" />
     </bean>
 
     <bean id="shard_2" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
-        <property name="shardId" value="2"/>
+        <property name="shardId" value="102"/>
+        <property name="dataSource" ref="lazyConnectionDataSource_2" />
+    </bean>
+    <bean id="shard_3" class="org.makersoft.shards.cfg.impl.ShardConfigurationImpl">
+        <property name="shardId" value="103"/>
         <property name="dataSource" ref="lazyConnectionDataSource_3" />
     </bean>
 
@@ -42,17 +46,21 @@
         <property name="typeAliasesPackage" value="cn.easyxue.mybatis.shards.domain"/>
         <property name="shardConfigurations">
             <array>
-                <ref bean="shard_0"/>
+                <ref bean="plat_0"/>
                 <ref bean="shard_1"/>
                 <ref bean="shard_2"/>
+                <ref bean="shard_3"/>
             </array>
         </property>
-        <property name="shardStrategyFactory">
-            <bean class="cn.easyxue.mybatis.shards.CompanyShardStrategyFactory"/>
-        </property>
+        <property name="shardStrategyFactory" ref="shardStrategyFactory"/>
         <property name="idGenerator">
             <bean class="org.makersoft.shards.id.uuid.ShardedUUIDGenerator"/>
         </property>
+    </bean>
+    
+    <bean id="shardStrategyFactory" class="cn.easyxue.mybatis.shards.CompanyShardStrategyFactory">
+        <property name="defaultShardId" value="103"/>
+        <property name="mainId" value="0"/>
     </bean>
 
     <!-- scan for mappers and let them be autowired -->
@@ -157,6 +165,9 @@
     </bean>
     
     <!--Test-->
+    <bean id="jdbcTemplate_0" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="lazyConnectionDataSource_h2"/>
+    </bean>
     <bean id="jdbcTemplate_1" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="lazyConnectionDataSource_1"/>
     </bean>
@@ -168,17 +179,20 @@
     </bean>
 
     <!-- 初始化数据表结构 -->
-    <jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+    <jdbc:initialize-database data-source="dataSource_h2" ignore-failures="ALL">
         <jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql"/>
     </jdbc:initialize-database>
+<!--    <jdbc:initialize-database data-source="dataSource_1" ignore-failures="ALL">
+        <jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql"/>
+    </jdbc:initialize-database>-->
 
-    <jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
+<!--    <jdbc:initialize-database data-source="dataSource_2" ignore-failures="ALL">
         <jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql"/>
     </jdbc:initialize-database>
 
     <jdbc:initialize-database data-source="dataSource_3" ignore-failures="ALL">
         <jdbc:script location="classpath:/databases/sql/${db.type}/shards.schema.sql"/>
-    </jdbc:initialize-database>
+    </jdbc:initialize-database>-->
     
     
 </beans>

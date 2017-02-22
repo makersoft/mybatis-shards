@@ -8,7 +8,6 @@
  */
 package cn.easyxue.mybatis.shards.mapper;
 
-import cn.easyxue.mybatis.shards.domain.shard0.Company;
 import cn.easyxue.mybatis.shards.domain.shard1.Employee;
 
 import org.makersoft.shards.annotation.MyBatisMapper;
@@ -19,10 +18,9 @@ import org.makersoft.shards.annotation.MyBatisMapper;
 @MyBatisMapper
 public interface EmployeeMapper {
 
-    
-    int createTable(Company company);
-    
-	int insert(Employee employee);
+    int createTable(Employee employee);
+
+    int insert(Employee employee);
 
 //	Role findById(String id);
 //
@@ -35,6 +33,4 @@ public interface EmployeeMapper {
 //	int deleteById(String id);
 //
 //	int deleteAll();
-
-
 }

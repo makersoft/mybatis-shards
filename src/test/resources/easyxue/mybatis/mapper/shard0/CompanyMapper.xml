@@ -24,7 +24,7 @@
 		INSERT INTO ${prefix}easyxue_company${suffix} 
 			(id, name, dbkey, creatorId) 
 		VALUES
-			(#{id}, #{name}, #{creatorId}, #{dbKey})
+			(#{id}, #{name}, #{dbKey},#{creatorId})
 	</insert>
 	
 	<delete id="deleteAll">
