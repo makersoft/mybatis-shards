@@ -1,9 +1,10 @@
 [![][Logo]][1] 
 # [MyBatis-Shards][1] 专业的MyBatis数据库切分框架
 
-## MyBatis Shards简介
+## MyBatis Shards(MYC版)简介
 
 MyBatis Shards在实现方式上完全借鉴于Hibernate Shards，目前可以认为是Hibernate Shards的一个迁移版本。
+MYC版是基于原始的版本进行了部分改进,修复了其中的一些漏洞.
 
 ## MyBatis Shards概述
 
