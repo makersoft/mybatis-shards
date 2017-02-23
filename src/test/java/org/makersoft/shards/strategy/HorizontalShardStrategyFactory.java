@@ -43,8 +43,16 @@ public class HorizontalShardStrategyFactory implements ShardStrategyFactory {
 	}
 	
 	private ShardSelectionStrategy getShardSelectionStrategy(final List<ShardId> shardIds){
+        //每次请求都是一个新的策略对象,一定程度上可以防止内存洗泄露.
+        //前提是这个方法应该要在连接数据库前被调用.
 		return new ShardSelectionStrategy(){
 
+            /**
+             * 为新对象设定分区ID.
+             * @param statement
+             * @param obj
+             * @return 
+             */
 			@Override
 			public ShardId selectShardIdForNewObject(String statement, Object obj) {
 				if(obj instanceof User){
@@ -56,6 +64,7 @@ public class HorizontalShardStrategyFactory implements ShardStrategyFactory {
 			}
 
 			private ShardId determineShardId(int gender) {
+                //XXX 这里是根据性别来分区?搞笑了吧.
 				if(User.SEX_MALE == gender){
 					return ShardId.findByShardId(shardIds, 0);
 				}else if(User.SEX_FEMALE == gender){
@@ -70,7 +79,7 @@ public class HorizontalShardStrategyFactory implements ShardStrategyFactory {
 	
 	private ShardResolutionStrategy getShardResolutionStrategy(final List<ShardId> shardIds){
 		return new AllShardsShardResolutionStrategy(shardIds) {
-			
+			//这里已经没有数据源对象,数据源应该在此之前已经切换了.
 			@Override
 			public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
 					ShardResolutionStrategyData shardResolutionStrategyData) {

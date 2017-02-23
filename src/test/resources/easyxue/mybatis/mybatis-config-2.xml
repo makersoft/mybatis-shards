@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<properties resource="application.properties">
+		<property name="driver" value="com.mysql.jdbc.Driver" />
+	</properties>
+
+	<settings>
+		<setting name="cacheEnabled" value="true" />
+		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="multipleResultSetsEnabled" value="true" />
+		<setting name="useColumnLabel" value="true" />
+		<setting name="useGeneratedKeys" value="false" />
+		<setting name="defaultExecutorType" value="SIMPLE" />
+		<setting name="defaultStatementTimeout" value="25" />
+	</settings>
+
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC">
+				<property name="" value="" />
+			</transactionManager>
+			<dataSource type="UNPOOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${ds3.jdbc.url}" />
+				<property name="username" value="${ds3.jdbc.username}" />
+				<property name="password" value="${ds3.jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<mappers>
+		<mapper resource="mybatis/mapper/shard0/UserMapper.xml" />
+	</mappers>
+	
+</configuration>

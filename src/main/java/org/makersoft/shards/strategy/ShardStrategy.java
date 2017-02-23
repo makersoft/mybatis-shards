@@ -14,16 +14,23 @@ import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
 
 /**
+ * 分区策略接口.
+ *
  * @author Feng Kuok
  */
 public interface ShardStrategy {
-	
-	ShardSelectionStrategy getShardSelectionStrategy();
 
-	ShardResolutionStrategy getShardResolutionStrategy();
+    /**
+     * 取得创建对象分区策略.
+     *
+     * @return
+     */
+    ShardSelectionStrategy getShardSelectionStrategy();
 
-	ShardAccessStrategy getShardAccessStrategy();
-	
-	ShardReduceStrategy getShardReduceStrategy();
-	
+    ShardResolutionStrategy getShardResolutionStrategy();
+
+    ShardAccessStrategy getShardAccessStrategy();
+
+    ShardReduceStrategy getShardReduceStrategy();
+
 }
