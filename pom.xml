@@ -265,14 +265,14 @@
     </mailingLists>
 
     <scm>
-        <url>https://github.com/makersoft/mybatis-shards</url>
-        <connection>scm:git://github.com/makersoft/mybatis-shards.git</connection>
-        <developerConnection>scm:git@github.com:makersoft/mybatis-shards.git</developerConnection>
+        <url>https://github.com/mycsoft/mybatis-shards</url>
+        <connection>scm:https://github.com/mycsoft/mybatis-shards.git</connection>
+        <developerConnection>scm:git@github.com:mycsoft/mybatis-shards.git</developerConnection>
     </scm>
 
     <issueManagement>
         <system>Github Issues</system>
-        <url>https://github.com/makersoft/mybatis-shards/issues</url>
+        <url>https://github.com/mycsoft/mybatis-shards/issues</url>
     </issueManagement>
 
     <ciManagement>
