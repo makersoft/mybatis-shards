@@ -5,7 +5,7 @@
     <groupId>name.myc</groupId>
     <artifactId>mybatis-shards</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1</version>
 
     <name>mybatis-shards(myc)</name>
     <url>http://myc.name</url>
