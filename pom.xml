@@ -368,6 +368,33 @@
                 <version>2.8.2</version>
                 
             </plugin>
+            <plugin>  
+                <groupId>org.codehaus.mojo</groupId>  
+                <artifactId>findbugs-maven-plugin</artifactId>  
+                <version>3.0.4</version>  
+                <configuration>  
+                    <!-- <configLocation>${basedir}/springside-findbugs.xml</configLocation> -->  
+                    
+                    <threshold>High</threshold>  
+                    <effort>Default</effort>  
+                    <findbugsXmlOutput>true</findbugsXmlOutput>  
+                    <!-- findbugs xmlÊä³öÂ·¾¶-->         
+                    <findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>  
+                </configuration>  
+            </plugin>  
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>findbugs-maven-plugin</artifactId>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     
