@@ -12,30 +12,31 @@ import javax.sql.DataSource;
 
 /**
  * Class description goes here.
- * 
+ *
  * @version 2014年3月13日 下午3:53:15
  * @author Feng Kuok
  */
 public class ShardDataSource {
+//TODO 这个类干嘛用的?
 
-	/**
-	 * 名称
-	 */
-	private String name;
-	
-	/**
-	 * 分区ID
-	 */
-	private int shardId;
-	
-	/**
-	 * 数据源
-	 */
-	private DataSource dataSource;
-
-	/**
-	 * 是否为Reduce数据源
-	 */
-	private boolean reducer;
+//    /**
+//     * 名称
+//     */
+//    private String name;
+//
+//    /**
+//     * 分区ID
+//     */
+//    private int shardId;
+//
+//    /**
+//     * 数据源
+//     */
+//    private DataSource dataSource;
+//
+//    /**
+//     * 是否为Reduce数据源
+//     */
+//    private boolean reducer;
 
 }
