@@ -318,6 +318,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 
 	@Override
 	public int insert(String statement, Object parameter) {
+        assert parameter != null : "参数必须有值.否则后面会出错.";
 		ShardId shardId = this.selectShardIdForNewObject(statement, parameter);
 		if (shardId == null) {
 			shardId = this.getShardIdForStatementOrParameter(statement, parameter);
@@ -355,7 +356,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 			Configuration configuration = session.getConfiguration();
 			MappedStatement ms = configuration.getMappedStatement(statement);
 
-			if (parameter != null && ms != null && ms.getKeyProperties() != null) {
+			if (ms != null && ms.getKeyProperties() != null) {
 				String keyProperty = ms.getKeyProperties()[0]; // just one key property is supported
 				final MetaObject metaParam = configuration.newMetaObject(parameter);
 				if (keyProperty != null && metaParam.hasSetter(keyProperty)) {
@@ -396,7 +397,7 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 			rows += shardIdsToShards.get(shardId).establishSqlSession()
 					.update(statement, ParameterUtil.resolve(parameter, shardId));
 			log.debug(String.format("Updateing object of type %s to shard %s",
-					parameter == null ? parameter : parameter.getClass(), shardId));
+					parameter == null ? "NullObject" : parameter.getClass(), shardId));
 		}
 
 		return rows;
