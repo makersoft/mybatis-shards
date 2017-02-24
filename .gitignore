@@ -6,3 +6,4 @@
 /.idea
 /*.iml
 /.DS_Store
+/derby.log

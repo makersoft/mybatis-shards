@@ -123,6 +123,7 @@ public abstract class ParameterUtil {
 			Class<?> clazz = object.getClass();
 			Field[] first = clazz.getDeclaredFields();
 			Field[] second = clazz.getSuperclass().getDeclaredFields();
+            //FIXME 只支持二级扫描,需要升级到无限级别.
 			
 			Field[] fields = Arrays.copyOf(first, first.length + second.length);
 			System.arraycopy(second, 0, fields, first.length, second.length);
@@ -151,15 +152,28 @@ public abstract class ParameterUtil {
 	}
 	
 	public static Object generatePrimaryKey(Object object, Serializable id) {
+        return generatePrimaryKeyForever(object, id);
+    }
+
+    /**
+     * 只检查三级.
+     *
+     * @param object
+     * @param id
+     * @return
+     */
+    private static Object generatePrimaryKey3(Object object, Serializable id) {
 		if (object != null) {
 			Assert.notNull(id, "generated id can not be null.");
 			
 			Class<?> clazz = object.getClass();
 			Field[] first = clazz.getDeclaredFields();
 			Field[] second = clazz.getSuperclass().getDeclaredFields();
-			
-			Field[] fields = Arrays.copyOf(first, first.length + second.length);
+            Field[] third = clazz.getSuperclass().getSuperclass().getDeclaredFields();
+            //只支持到两级父类,不能支持无限级.
+            Field[] fields = Arrays.copyOf(first, first.length + second.length + third.length);
 			System.arraycopy(second, 0, fields, first.length, second.length);
+            System.arraycopy(third, 0, fields, first.length + second.length, third.length);
 
 			for (Field field : fields) {
 				field.setAccessible(true);
@@ -176,8 +190,45 @@ public abstract class ParameterUtil {
 					}
 				}
 			}
+        }
 
+        return null;
 		}
+
+    /**
+     * 无限循环查询主键. 一直查到Object.
+     *
+     * @param object
+     * @param id
+     * @return
+     */
+    private static Object generatePrimaryKeyForever(Object object, Serializable id) {
+        if (object != null) {
+            Assert.notNull(id, "generated id can not be null.");
+
+            Class<?> clazz = object.getClass();
+
+            while (clazz != null) {
+                Field[] fields = clazz.getDeclaredFields();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+
+                    PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
+                    if (primaryKey != null) {
+                        try {
+                            //set id
+                            field.set(object, id);
+
+                            return object;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                clazz = clazz.getSuperclass();
+            }
+
+        }
 
 		return null;
 	}
