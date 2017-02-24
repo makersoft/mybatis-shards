@@ -8,8 +8,11 @@
  */
 package org.makersoft.shards.cfg;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.mapping.Environment;
@@ -25,6 +28,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
  * (只重写用的到的几个方法)
  */
 public class MyBatisConfigurationsWrapper extends Configuration {
+    
+    private static final Log log = LogFactory.getLog(MyBatisConfigurationsWrapper.class);
 
 	private final Configuration configuration;
 
@@ -128,12 +133,13 @@ public class MyBatisConfigurationsWrapper extends Configuration {
 	protected void buildAllStatements() {
 		for (SqlSessionFactory sqlSessionFactory : getSqlSessionFactories()) {
 			try {
-				Configuration configuration = sqlSessionFactory.getConfiguration();
+				Configuration conf = sqlSessionFactory.getConfiguration();
 
 				Method m = Configuration.class.getDeclaredMethod("buildAllStatements");
 				m.setAccessible(true);
-				m.invoke(configuration);
-			} catch (Exception e) {
+				m.invoke(conf);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                log.error("build statements failed!", e);
 				// ignore exception
 			}
 		}

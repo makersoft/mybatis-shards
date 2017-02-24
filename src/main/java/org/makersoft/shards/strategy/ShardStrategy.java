@@ -14,6 +14,8 @@ import org.makersoft.shards.strategy.resolution.ShardResolutionStrategy;
 import org.makersoft.shards.strategy.selection.ShardSelectionStrategy;
 
 /**
+ * 分区策略接口.
+ *
  * @author Feng Kuok
  */
 public interface ShardStrategy {
