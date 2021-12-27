@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
@@ -73,6 +74,21 @@ public class ShardedSqlSessionTemplate implements SqlSession, InitializingBean{
 	public <K, V> Map<K, V> selectMap(String statement, Object parameter,
 			String mapKey, RowBounds rowBounds) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String s) {
+		return null;
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String s, Object o) {
+		return null;
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String s, Object o, RowBounds rowBounds) {
 		return null;
 	}
 

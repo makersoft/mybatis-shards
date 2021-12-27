@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.binding.BindingException;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
@@ -309,6 +310,22 @@ public class ShardedSqlSessionImpl implements ShardedSqlSession, ShardIdResolver
 		return new ShardSelectImpl(shards, new AdHocSelectFactoryImpl(statement, parameter, mapKey,
 				rowBounds), shardStrategy.getShardAccessStrategy(),
 				shardStrategy.getShardReduceStrategy()).getResultMap();
+	}
+
+	// todo
+	@Override
+	public <T> Cursor<T> selectCursor(String s) {
+		return null;
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String s, Object o) {
+		return null;
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String s, Object o, RowBounds rowBounds) {
+		return null;
 	}
 
 	@Override

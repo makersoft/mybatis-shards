@@ -14,8 +14,8 @@
     <bean id="multiDataSourcesTransactionManager" class="org.makersoft.shards.transaction.MultiDataSourcesTransactionManager">
         <property name="dataSources">
             <list>
-                <ref local="lazyConnectionDataSource_1"/>
-                <ref local="lazyConnectionDataSource_2"/>
+                <ref bean="lazyConnectionDataSource_1"/>
+                <ref bean="lazyConnectionDataSource_2"/>
             </list>
         </property>
     </bean>
